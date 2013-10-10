@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "SDL.h"
-#include "assets/HexCellBorder.xpm"
 #include "TextureManager.hpp"
 #include "Game.hpp"
 #include "HexGrid.hpp"
@@ -10,30 +9,11 @@ HexGrid* HexGrid::s_pInstance = 0;
 
 bool HexGrid::init(int w, int h)
 {
-	SDL_Texture *pTempTexture = NULL;
-	if(!((pTempTexture = TextureManager::Instance()->load(HexCell_xpm,Game::Instance()->getRenderer()))))
-	{
-		return false;
-	}
-
-	Uint32 format;
-	int access, h_width, h_height;
-	if(SDL_QueryTexture(pTempTexture,&format,&access,&h_width,&h_height)<0)
-	{
-		//SDL_GetError()
-		return false;
-	}
-
-	if(pHexTexture)
-		SDL_DestroyTexture(pHexTexture);
-
-	pHexTexture = pTempTexture;
-
-	hex_width = h_width;
-	hex_height = h_height;
+	hex_width = 54;
+	hex_height = 45;
 
 	std::cerr << "Grid Dimensions: " << w << 'x' << h << std::endl;
-	std::cerr << "Grid Texture: " << h_width << 'x' << h_height << std::endl;
+//	std::cerr << "Grid Texture: " << h_width << 'x' << h_height << std::endl;
 
 	m_dim = std::make_pair(w,h);
 
@@ -75,7 +55,7 @@ void HexGrid::draw()
 	{
 		for(int j = 0;j < m_dim.second;++j)
 		{
-			TextureManager::Instance()->draw(pHexTexture,i*S,j*H + (i%2)*(H/2.00),W,H,Game::Instance()->getRenderer());
+			TextureManager::Instance()->draw("hexcell",i*S,j*H + (i%2)*(H/2.00),W,H,Game::Instance()->getRenderer());
 		}
 	}
 

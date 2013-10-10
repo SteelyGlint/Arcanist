@@ -1,5 +1,5 @@
 /* XPM */
-static char * Glyph_xpm[] = {
+static char const *Glyph_xpm[] = {
 "22 22 2 1",
 ")	c #FF00FF",
 " 	c #FFFF00",

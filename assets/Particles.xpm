@@ -1,6 +1,6 @@
 /* XPM */
 
-static char * Particles_xpm[] = {
+static char const * Particles_xpm[] = {
 "54 9 5 1",
 " 	c #FFFFFF",
 ".	c #191919",

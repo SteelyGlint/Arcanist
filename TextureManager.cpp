@@ -4,6 +4,22 @@
 #include "DebugRender.hpp"
 
 TextureManager* TextureManager::s_pInstance = 0;
+#include "Game.hpp"
+
+#include "assets/XPMLoader.hpp"
+#include "assets/Particles.xpm"
+#include "assets/HexCellBorder.xpm"
+#include "assets/Glyph.xpm"
+
+
+bool TextureManager::init()
+{
+	load(XPMLoadFromStaticCharArray(Glyph_xpm),"glyph",TheGame::Instance()->getRenderer());
+	load(XPMLoadFromStaticCharArray(Particles_xpm),"greyscale", TheGame::Instance()->getRenderer());
+	load(XPMLoadFromStaticCharArray(HexCell_xpm),"hexcell",TheGame::Instance()->getRenderer());
+
+	return true;
+}
 
 
 bool TextureManager::load(std::string fileName, std::string id, SDL_Renderer* pRenderer)
@@ -87,7 +103,7 @@ void TextureManager::draw(SDL_Texture *pTexture, int x, int y, int width, int he
 	destRect.x = x;
 	destRect.y = y;
 
-	SDL_RenderCopyEx(pRenderer, pTexture, &srcRect, 
+	SDL_RenderCopyEx(pRenderer, pTexture, &srcRect,
 	&destRect, 0, 0, flip);
 }
 

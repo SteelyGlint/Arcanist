@@ -6,13 +6,13 @@
 
 #include "Game.hpp"
 #include "TextureManager.hpp"
-#include "assets/Glyph.xpm"
+
 
 GlyphController* GlyphController::s_pInstance = NULL;
 
 bool GlyphController::init()
 {
-	return TextureManager::Instance()->load(Glyph_xpm,"glyph",TheGame::Instance()->getRenderer());
+	return true;
 }
 
 void GlyphController::clean()
@@ -69,9 +69,10 @@ bool GlyphController::debugGlyphs()
 	int i = 0;
 	for( auto & g : m_mapGlyph )
 	{
-		std::cout << g.second.data().m_loc.first << 'x' << g.second.data().m_loc.second << '\n';
+		std::cout << std::dec << g.second.data().m_loc.first << 'x' << g.second.data().m_loc.second << '\n';
 		++i;
 	}
 
 	std::cout << "Found " << i << "Glyphs.\n";
+	return true;
 }

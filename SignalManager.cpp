@@ -14,6 +14,7 @@ using namespace Glyph;
 
 bool SignalManager::init()
 {
+	return true;
 }
 
 void SignalManager::update()

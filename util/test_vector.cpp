@@ -1,6 +1,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <limits>
+#define HEADER_ONLY
 #include "Vector.hpp"
 
 #include <type_traits>
@@ -25,22 +26,29 @@ void print_info(T val)
 int main()
 {
 	Vector2D<int> d{1,1};
-	float i_val = 3.03;
+	int i_val = 3;
+	float f_val = 3.0;
+	double d_val = 9.0;
 
 	print_info(d);
 	print_info(i_val);
 	print_info(d * i_val);
 	print_info(d += i_val);
 
+	print_info(d);
+	print_info(f_val);
+	print_info(Vector2D<float>(d * f_val));
+
+
 
 	Vector2D<double> d2{2.63,6.34};
 	print_info(d2);
-	print_info(d+d2);
+	print_info(d2+=d);
 
 
 	Vector2D<float> d3{9.63,12.34};
 	print_info(d3);
-	print_info(d3 -= d2);
+	print_info(d2 - d3);
 
 	print_info(d2*0);
 

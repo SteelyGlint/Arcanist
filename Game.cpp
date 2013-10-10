@@ -5,8 +5,6 @@
 #include "TextureManager.hpp"
 #include "DebugRender.hpp"
 
-#include "assets/Particles.xpm"
-#include "assets/HexCellBorder.xpm"
 
 #include "MoteGraphicalObject.hpp"
 
@@ -35,15 +33,16 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	print_render_info(rend);
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 
+	if(!TheTextureManager::Instance()->init())
+	{
+		return false;
+	}
+
 	if(!TheHexGrid::Instance()->init(6,6))
 	{
 		return false;
 	}
 
-	if(!TextureManager::Instance()->load(Particles_xpm,"greyscale",rend))
-	{
-		return false;
-	}
 
 	if(!TheGlyphController::Instance()->init())
 	{

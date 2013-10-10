@@ -29,7 +29,7 @@ void print_texture_info(T* pTexture)
 		cout << "query texture error: " << SDL_GetError() << endl;
 	else
 	{
-		cout << "Texture Info: " << width << 'x' << height << ' ';
+		cout << "Texture Info: " << std::dec << width << 'x' << height << ' ';
 		if(access == SDL_TEXTUREACCESS_STATIC)
 			cout << "(static) ";
 		else if(access == SDL_TEXTUREACCESS_STREAMING)
@@ -117,7 +117,7 @@ void print_render_info(T* renderer)
 	
 	cout << "\nMaximum texture width " << r_info.max_texture_width << " maximum texture height " << r_info.max_texture_height << std::endl;
 
-	cout << "Render Formats:\n";
+	cout << "Render Formats:\n" << std::dec;
 	uint i;
 	for(i = 0;i < r_info.num_texture_formats;++i)
 	{

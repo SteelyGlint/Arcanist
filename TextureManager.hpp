@@ -8,6 +8,8 @@
 class TextureManager
 {
 public:
+	bool init(); /* loads default textures */
+
 	bool load(std::string fileName, std::string id, SDL_Renderer* pRenderer);
 
 	SDL_Texture* load(char **xpm, SDL_Renderer* pRenderer);
@@ -39,4 +41,6 @@ protected:
 private:
 	TextureManager() { }
 };
+
+typedef TextureManager TheTextureManager;
 #endif

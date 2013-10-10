@@ -1,5 +1,5 @@
 /* XPM */
-static char * HexCell_xpm[] = {
+static char const * HexCell_xpm[] = {
 "52 45 2 1",
 " 	g None",
 ".	g #FFFFFF",

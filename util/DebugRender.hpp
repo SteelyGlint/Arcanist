@@ -87,8 +87,6 @@ void print_texture_info(T* pTexture)
 			<< endl;
 	}
 
-
-
 }
 
 

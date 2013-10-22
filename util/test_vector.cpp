@@ -6,9 +6,10 @@
 
 #include <type_traits>
 
-static_assert( std::is_arithmetic<int>::value, "yes?");
-
 using namespace std;
+
+template<typename T>
+void print_info(T t);
 
 template<typename T>
 void print_info(Vector2D<T> vec)
@@ -38,8 +39,6 @@ int main()
 	print_info(d);
 	print_info(f_val);
 	print_info(Vector2D<float>(d * f_val));
-
-
 
 	Vector2D<double> d2{2.63,6.34};
 	print_info(d2);

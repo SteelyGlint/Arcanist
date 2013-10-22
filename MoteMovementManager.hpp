@@ -1,6 +1,10 @@
 #ifndef __MoteMovementManager_hpp__
 #define __MoteMovementManager_hpp__
+#include "HexCell.hpp"
 #include <vector>
+
+namespace Wand
+{
 
 class GameObject;
 
@@ -37,7 +41,7 @@ private:
 	static MoteMovementManager* p_sInstance;
 };
 
-typedef MoteMovementManager TheMoteMovementManager;
-
+};
+typedef Wand::MoteMovementManager TheMoteMovementManager;
 
 #endif

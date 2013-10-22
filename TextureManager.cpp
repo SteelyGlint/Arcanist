@@ -3,7 +3,6 @@
 #include "TextureManager.hpp"
 #include "DebugRender.hpp"
 
-TextureManager* TextureManager::s_pInstance = 0;
 #include "Game.hpp"
 
 #include "assets/XPMLoader.hpp"
@@ -11,6 +10,9 @@ TextureManager* TextureManager::s_pInstance = 0;
 #include "assets/HexCellBorder.xpm"
 #include "assets/Glyph.xpm"
 
+
+namespace Wand {
+TextureManager* TextureManager::s_pInstance = 0;
 
 bool TextureManager::init()
 {
@@ -128,3 +130,4 @@ void TextureManager::drawFrame(std::string id, int x, int y, int width, int heig
 
 	SDL_RenderCopyEx(pRenderer, m_textureMap[id], &srcRect, &destRect, 0, 0, flip);
 }
+} /* namespace Wand */

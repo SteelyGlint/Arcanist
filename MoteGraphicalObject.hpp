@@ -5,6 +5,10 @@
 #include <cstdint>
 #include "SDLGameObject.hpp"
 
+
+namespace Wand
+{
+
 constexpr uint8_t North = 0x01;
 constexpr uint8_t East = 0x02;
 constexpr uint8_t West = 0x04;
@@ -43,6 +47,8 @@ public:
 
 protected:
 	Bearing m_bearing;
+};
+
 };
 
 #endif

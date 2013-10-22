@@ -7,12 +7,11 @@
 #include "GlyphController.hpp"
 
 
+namespace Wand {
 MoteMovementManager * MoteMovementManager::p_sInstance = NULL;
 
 bool MoteMovementManager::init()
 {
-	hexgrid_dim = TheHexGrid::Instance()->dim();
-	hex_dim = std::make_pair(TheHexGrid::Instance()->get_hex_width(),TheHexGrid::Instance()->get_hex_width());
 	return true;
 }
 
@@ -47,6 +46,7 @@ void MoteMovementManager::clean()
 {
 }
 
+} /* namespace wand */
 
 
 #if 0

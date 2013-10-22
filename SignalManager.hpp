@@ -4,7 +4,9 @@
 #include <string>
 #include <functional>
 
-class GlyphBase;
+
+namespace Wand
+{
 
 class SignalDirected
 {
@@ -15,10 +17,10 @@ public:
 	}
 
 private:
-	int m_arrival_tick; //= std::integral_max_int;
+	uint m_arrival_tick; //= std::integral_max_int;
 
-	GlyphBase *m_src = nullptr;
-	GlyphBase *m_dest = nullptr;
+	//GlyphBase *m_src = nullptr;
+	//GlyphBase *m_dest = nullptr;
 
 	//std::string m_message;
 	//std::function<void(BaseGlyph::*)(BaseGlyph*,std::string)> m_func;
@@ -54,7 +56,7 @@ private:
 	static SignalManager* p_sInstance;
 };
 
-typedef SignalManager TheSignalManager;
+};
 
-
+typedef Wand::SignalManager TheSignalManager;
 #endif

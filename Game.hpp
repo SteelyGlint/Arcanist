@@ -2,11 +2,13 @@
 #define __Game_hpp__
 #include <vector>
 #include <string>
-#include "SDL.h"
-#include "HexGrid.hpp"
+#include <SDL.h>
+#include "HexCell.hpp"
 #include "MoteMovementManager.hpp"
 
 
+namespace Wand
+{
 class Game
 {
 public:
@@ -22,7 +24,6 @@ public:
 	void clean();
 
 	void quit();
-
 
 	SDL_Renderer* getRenderer() const { return rend; }
 
@@ -41,7 +42,6 @@ private:
 	SDL_Window* win;
 	SDL_Renderer* rend;
 	
-	int m_currentFrame = 0;
 	bool m_bRunning = true;
 
 	Game() = default;
@@ -49,8 +49,8 @@ private:
 	static Game* s_pInstance;
 
 };
-
 typedef Game TheGame;
+};
 
 
 #endif

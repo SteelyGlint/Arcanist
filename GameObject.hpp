@@ -2,6 +2,9 @@
 #define __GameObject_hpp__
 #include <string>
 
+namespace Wand
+{
+
 class LoaderParams
 {
 public:
@@ -39,4 +42,5 @@ protected:
 	virtual ~GameObject() {}
 };
 
+};
 #endif

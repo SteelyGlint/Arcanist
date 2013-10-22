@@ -16,8 +16,6 @@
 
         g++ -I..\..\boost_1_32_0  -o%TEMP%\metaprogram-chapter9-example1.exe example1.cpp
         
-
-*/
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/for_each.hpp>
 
@@ -27,28 +25,15 @@
 namespace mpl = boost::mpl;
 using namespace mpl::placeholders;
 
+
+
+*/
 #include <iostream>
 #include <typeinfo>
 #include <vector>
 
 #include <SDL2/SDL.h>
 #include "/usr/include/SDL2/SDL_events.h"
-
-struct print_type
-{
-    template <class T>
-    void operator()(T) const
-    {
-        std::cout << typeid(T).name() << std::endl;
-    }
-};
-
-typedef mpl::vector<int,SDL_EventType, char*> s;
-
-static int __main()
-{
-    mpl::for_each<s>(print_type());
-}
 
 struct AllEventTypes
 {

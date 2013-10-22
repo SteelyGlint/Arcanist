@@ -1,22 +1,18 @@
 #ifndef __GlyphController_hpp__
 #define __GlyphController_hpp__
-#include "HexGrid.hpp"
-#include "Glyph.hpp"
+#include "HexCell.hpp"
+#include "GlyphGraphicalObject.hpp"
 #include <map>
 
-using namespace Glyph;
+namespace Wand
+{
 
 class GlyphController
 {
 	protected:
-	std::map<HexIndex,Glyph::GlyphGraphicalObject> m_mapGlyph;
+	std::map<HexIndex,GlyphGraphicalObject> m_mapGlyph;
 
 	public:
-	bool debugGlyphs();
-
-
-	bool placeGlyph(HexIndex loc, Glyph_Type g_type = Glyph_Type::Extract);
-
 	bool init();
 
 	void clean();
@@ -40,7 +36,8 @@ class GlyphController
 	static GlyphController *s_pInstance;
 	
 };
+};
 
-typedef GlyphController TheGlyphController;
+typedef Wand::GlyphController TheGlyphController;
 
 #endif

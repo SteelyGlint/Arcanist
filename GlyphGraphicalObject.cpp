@@ -1,10 +1,14 @@
 #include <SDL.h>
 #include "MoteGraphicalObject.hpp"
-#include "Glyph.hpp"
+#include "GlyphGraphicalObject.hpp"
 #include "MoteMovementManager.hpp"
 
-namespace Glyph
+namespace Wand
 {
+
+void GlyphGraphicalObject::clean()
+{
+}
 
 void GlyphGraphicalObject::update()
 {
@@ -12,6 +16,7 @@ void GlyphGraphicalObject::update()
 
 void GlyphGraphicalObject::draw()
 {
+	SDLGameObject::draw();
 }
 
 };

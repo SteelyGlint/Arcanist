@@ -3,7 +3,7 @@
 #include "InputHandler.hpp"
 #include "Game.hpp"
 
-namespace Handler {
+namespace Wand {
 InputHandler* InputHandler::s_pInstance = 0;
 
 void InputHandler::update()

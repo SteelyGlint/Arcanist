@@ -10,7 +10,7 @@
 
 #include "GlyphController.hpp"
 
-using namespace Handler;
+namespace Wand {
 
 Game * Game::s_pInstance = nullptr;
 
@@ -38,12 +38,6 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 		return false;
 	}
 
-	if(!TheHexGrid::Instance()->init(6,6))
-	{
-		return false;
-	}
-
-
 	if(!TheGlyphController::Instance()->init())
 	{
 		return false;
@@ -61,7 +55,7 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 
 void Game::draw()
 {
-	TheHexGrid::Instance()->draw();
+	//TheHexGrid::Instance()->draw();
 
 	TheGlyphController::Instance()->draw();
 
@@ -78,8 +72,6 @@ void Game::render()
 
 void Game::update()
 {
-	m_currentFrame = int(((SDL_GetTicks() / 100) % 6));
-
 	TheMoteMovementManager::Instance()->update();
 	TheGlyphController::Instance()->update();
 
@@ -89,6 +81,7 @@ void Game::update()
 		const std::pair<int,int> m_pos_1 = TheInputHandler::Instance()->getMousePosition<LEFT,0x001>();
 		const std::pair<int,int> m_pos_2 = TheInputHandler::Instance()->getMousePosition<LEFT,0x002>();
 
+/*
 		HexIndex h_id[2] = {
 			TheHexGrid::Instance()->atPoint(m_pos_1.first,m_pos_1.second),
 			TheHexGrid::Instance()->atPoint(m_pos_2.first,m_pos_2.second)
@@ -99,9 +92,9 @@ void Game::update()
 
 		prior_state = TheInputHandler::Instance()->getMouseButtonState(LEFT);
 
-		std::cerr << "add glyph " <<
-		TheGlyphController::Instance()->placeGlyph(h_id[0]) << std::endl;
-
+	//	std::cerr << "add glyph " <<
+	//	TheGlyphController::Instance()->placeGlyph(h_id[0]) << std::endl;
+*/
 
 	}
 
@@ -127,3 +120,5 @@ void Game::clean()
 	SDL_DestroyWindow(win);
 	SDL_Quit();
 }
+
+} /* namespace Wand */

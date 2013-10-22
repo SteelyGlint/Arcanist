@@ -2,15 +2,15 @@
 #include <SDL.h>
 
 #include "SignalManager.hpp"
-#include "HexGrid.hpp"
+#include "HexCell.hpp"
 #include "MoteGraphicalObject.hpp"
 
 #include "Glyph.hpp"
 #include "GlyphController.hpp"
 
+namespace Wand
+{
 SignalManager * SignalManager::p_sInstance = NULL;
-
-using namespace Glyph;
 
 bool SignalManager::init()
 {
@@ -39,3 +39,4 @@ void SignalManager::clean()
 }
 
 
+};

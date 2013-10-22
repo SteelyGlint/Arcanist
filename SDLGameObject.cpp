@@ -1,10 +1,13 @@
 
-#include "Game.hpp"
 #include "SDLGameObject.hpp"
+
+#include "Game.hpp"
 #include "TextureManager.hpp"
 
 
 
+namespace Wand
+{
 
 SDLGameObject::SDLGameObject(LoaderParams const& pParams) 
 	: GameObject(pParams),
@@ -18,4 +21,4 @@ void SDLGameObject::draw()
 	TextureManager::Instance()->drawFrame(m_textureID, m_x, m_y, m_width, m_height, m_currentRow, m_currentFrame, TheGame::Instance()->getRenderer());
 }
 
-
+}

@@ -7,15 +7,13 @@ using std::string;
 #include <SDL.h>
 
 #include "Game.hpp"
-
-
 #include "InputHandler.hpp"
-
 #include "GlyphController.hpp"
-using Handler::TheInputHandler;
 
 static bool no_updates = false;
 static int delay = 5;
+
+using namespace Wand;
 
 void pause_func(SDL_Scancode key, bool pressed)
 {
@@ -27,8 +25,6 @@ void pause_func(SDL_Scancode key, bool pressed)
 		std::cout << "unpaused\n";
 		no_updates = false;
 	}
-	
-	TheGlyphController::Instance()->debugGlyphs();
 }
 
 void playback_func(SDL_Scancode key, bool pressed)
@@ -48,9 +44,9 @@ int main()
 
 	assert(TheGame::Instance()->init("Particle Test",50,50,640,480,SDL_WINDOW_SHOWN));
 		
-   Handler::TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_SPACE,&pause_func);
-   Handler::TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEUP,&playback_func);
-   Handler::TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEDOWN,&playback_func);
+   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_SPACE,&pause_func);
+   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEUP,&playback_func);
+   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEDOWN,&playback_func);
 
 	while(Game::Instance()->running())
 	{

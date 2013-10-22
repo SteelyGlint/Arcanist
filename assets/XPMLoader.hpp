@@ -9,10 +9,10 @@ using std::is_same;
 using std::is_scalar;
 
 using std::is_const;
-
-
-
 using std::is_pointer;
+
+namespace Wand
+{
 
 template<typename T>
 char **XPMLoadFromStaticCharArray(T xpm)
@@ -58,4 +58,5 @@ char **XPMLoadFromStaticCharArray(T xpm)
 
 }
 
+};
 #endif

@@ -5,6 +5,8 @@
 #include "GameObject.hpp"
 
 
+namespace Wand
+{
 class SDLGameObject : public GameObject
 {
 public:
@@ -27,6 +29,8 @@ protected:
 	int m_currentRow;
 
 	int m_startTick;
+
+};
 
 };
 

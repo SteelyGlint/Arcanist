@@ -5,6 +5,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+namespace Wand
+{
 class TextureManager
 {
 public:
@@ -14,11 +16,13 @@ public:
 
 	SDL_Texture* load(char **xpm, SDL_Renderer* pRenderer);
 
+private:
 	bool load(char **xpm, std::string id, SDL_Renderer* pRenderer);
+	void draw(SDL_Texture *pTexture, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
+public:
 
 	void draw(std::string id, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-	void draw(SDL_Texture *pTexture, int x, int y, int width, int height, SDL_Renderer* pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	void drawFrame(std::string id, int x, int y, int width, int height, int currentRow, int currentFrame, SDL_Renderer *pRenderer, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
@@ -43,4 +47,5 @@ private:
 };
 
 typedef TextureManager TheTextureManager;
+};
 #endif

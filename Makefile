@@ -1,5 +1,5 @@
 CC=g++
-INCLUDES=-I/usr/include/SDL2
+INCLUDES=-I/usr/include/SDL2 -I. -Iutil/
 CFLAGS=-O0 -g $(INCLUDES) -std=c++11 -Wall #-pedantic -Werror
 LIBS=-lSDL2 -lSDL2_image
 

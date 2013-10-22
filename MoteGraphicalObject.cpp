@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "MoteGraphicalObject.hpp"
 
+namespace Wand {
 
 void MoteGraphicalObject::draw()
 {
@@ -26,4 +27,6 @@ void MoteGraphicalObject::update()
 
 	if(static_cast<std::uint8_t>(m_bearing) & West)
 		m_x -= 1;
+}
+
 }

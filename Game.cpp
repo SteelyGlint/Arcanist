@@ -33,6 +33,9 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	print_render_info(rend);
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 
+	int win_w, win_h;
+	SDL_GetWindowSize(win,&win_w,&win_h);
+
 	if(!TheTextureManager::Instance()->init())
 	{
 		return false;
@@ -56,11 +59,8 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 void Game::draw()
 {
 	//TheHexGrid::Instance()->draw();
-
 	TheGlyphController::Instance()->draw();
-
 	TheMoteMovementManager::Instance()->draw();
-
 }
 
 void Game::render()
@@ -75,13 +75,14 @@ void Game::update()
 	TheMoteMovementManager::Instance()->update();
 	TheGlyphController::Instance()->update();
 
+
+/*
 	static bool prior_state = TheInputHandler::Instance()->getMouseButtonState(LEFT);
 	if(prior_state != TheInputHandler::Instance()->getMouseButtonState(LEFT))
 	{
 		const std::pair<int,int> m_pos_1 = TheInputHandler::Instance()->getMousePosition<LEFT,0x001>();
 		const std::pair<int,int> m_pos_2 = TheInputHandler::Instance()->getMousePosition<LEFT,0x002>();
 
-/*
 		HexIndex h_id[2] = {
 			TheHexGrid::Instance()->atPoint(m_pos_1.first,m_pos_1.second),
 			TheHexGrid::Instance()->atPoint(m_pos_2.first,m_pos_2.second)
@@ -94,9 +95,10 @@ void Game::update()
 
 	//	std::cerr << "add glyph " <<
 	//	TheGlyphController::Instance()->placeGlyph(h_id[0]) << std::endl;
-*/
+
 
 	}
+*/
 
 	
 }

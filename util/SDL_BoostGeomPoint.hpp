@@ -1,4 +1,5 @@
-
+#ifndef __SDL_BoostGeomPoint_hpp__
+#define __SDL_BoostGeomPoint_hpp__
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
@@ -20,7 +21,7 @@ struct SDL_BBox
 
 BOOST_GEOMETRY_REGISTER_BOX(SDL_BBox, SDL_Point, ll, ur);
 
-SDL_BBox::operator SDL_Rect()
+inline SDL_BBox::operator SDL_Rect()
 {
 	int x{bg::get<bg::min_corner,0>(*this)};
 	int y{bg::get<bg::min_corner,1>(*this)};
@@ -29,14 +30,16 @@ SDL_BBox::operator SDL_Rect()
 		bg::get<bg::max_corner,0>(*this) - x,
 		bg::get<bg::max_corner,1>(*this) - y};
 
-return ret;
+	return ret;
 }
 
 
-SDL_BBox::SDL_BBox(SDL_Rect const& rhs)
+inline SDL_BBox::SDL_BBox(SDL_Rect const& rhs)
 : ll{rhs.x,rhs.y}, ur{rhs.x+rhs.w,rhs.y+rhs.h} { }
 	
 	
+
+
 
 /*
 namespace boost { namespace geometry { namespace traits {
@@ -75,3 +78,4 @@ struct access<myPoint<C, D, S>, I>
     }
 };
 */
+#endif

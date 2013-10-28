@@ -27,6 +27,7 @@ void screen_color_test(SDL_Renderer *rend)
 
 }
 
+extern void test_main(SDL_Window *, SDL_Renderer *);
 
 int main()
 {
@@ -43,24 +44,18 @@ int main()
 		SDL_WINDOW_SHOWN);
 
 	if( win == 0 )
-		return false;
+		return 0;
 
 	rend = SDL_CreateRenderer(win, -1, 0);
 
 	if(rend == 0)
-		return false;
+		return 0;
 
 
-	screen_color_test<0>(rend);
-	screen_color_test<1>(rend);
-	screen_color_test<2>(rend);
-	screen_color_test<3>(rend);
-	screen_color_test<4>(rend);
-	screen_color_test<5>(rend);
-
+	test_main(win,rend);
 	SDL_Quit();
 
-
+	return 1;
 }
 
 

@@ -24,6 +24,8 @@
 #include <random>
 #include <map>
 
+#include <boost/geometry/geometry.hpp>
+
 #include <util/HexSpace.hpp>
 
 using std::cout;
@@ -39,7 +41,8 @@ using std::pair;
 void ClockStart();
 void ClockEnd();
 
-typedef HexPolygonGen::point point_type;
+typedef THexPolygonGen<NoVerifyHexRing> HexRingGen;
+typedef HexRingGen::point point_type;
 
 namespace bg=boost::geometry;
 
@@ -101,7 +104,7 @@ template<typename KEY = int, typename VALUE = int,intmax_t TRIALS = 10000>
 class AccessExperiment
 {
 	public:
-	HexPolygonGen hGen;
+	HexRingGen hGen;
 
 	vector<point_type> access_idx;
 

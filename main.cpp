@@ -42,7 +42,7 @@ int main()
 {
 	const string win_title{"Particle Test"};
 
-	assert(TheGame::Instance()->init("Particle Test",50,50,640,480,SDL_WINDOW_SHOWN));
+	assert(TheGame::Instance()->init("Particle Test",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640,480,SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL));
 		
    TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_SPACE,&pause_func);
    TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEUP,&playback_func);

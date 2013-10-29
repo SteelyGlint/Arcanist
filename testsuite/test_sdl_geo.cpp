@@ -114,8 +114,69 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry)
 
 
 
-
 void test_main(SDL_Window *win, SDL_Renderer *rend)
+{
+	typedef bgm::d2::point_xy<float> hex_point_type;
+	using bg::dsv;
+
+	constexpr std::size_t b_rows = 15;
+	constexpr std::size_t b_cols = 15;
+
+	Hexagrid<b_rows,b_cols> b;
+
+
+	bgm::box<hex_point_type> hexgrid_bbox = bg::make_inverse< bgm::box< hex_point_type> >();
+
+
+	for(std::size_t i = 0; i < b_cols;++i)
+	{
+		for(std::size_t j = 0;j < b_rows;++j)
+		{
+			std::cout << "bb i,j " << i << ',' << j << ": " <<	dsv(b(i,j).getBB()) << std::endl;
+			bg::expand(hexgrid_bbox, b(i,j).getBB());
+		}
+	}
+
+	std::cout << "hexgrid bb" << dsv(hexgrid_bbox) << std::endl;
+
+	int win_w, win_h;
+	SDL_GetWindowSize(win,&win_w,&win_h);
+	std::cout << "Window widith: " << win_w
+				 << " height: " << win_h << std::endl;
+
+
+
+	trans::map_transformer<hex_point_type,hex_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
+
+
+	SDL_SetRenderDrawColor(rend,0,0,0,255);
+	SDL_RenderClear(rend);
+
+
+	SDL_SetRenderDrawColor(rend,255,128,255,255);
+	for(std::size_t i = 0; i < b_cols;++i)
+	{
+		for(std::size_t j = 0;j < b_rows;++j)
+		{
+			hex_ring_type dest_hexcell_ring;
+			assert(bg::transform(b(i,j).getRing(),dest_hexcell_ring,map_hex_to_pixel));
+			draw(rend,dest_hexcell_ring);
+		}
+	}
+
+	std::cout << "size of hexagon:" << sizeof(Hexagon) << std::endl;
+	std::cout << "alignof of hexagon:" << alignof(Hexagon) << std::endl;
+	std::cout << "alignment of hexagon:" << std::alignment_of<Hexagon>::value << std::endl;
+
+	SDL_RenderPresent(rend);
+	SDL_Delay(5000);
+
+
+
+	
+}
+
+void test_main2(SDL_Window *win, SDL_Renderer *rend)
 {
 	HexRingGen hGen;
 

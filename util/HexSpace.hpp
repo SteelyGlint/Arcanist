@@ -6,6 +6,10 @@
 #include <utility>
 #include <tuple>
 
+#include <type_traits>
+
+#include <cmath>
+
 #include <boost/geometry/geometries/ring.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
@@ -17,15 +21,25 @@ namespace bgm=boost::geometry::model;
 
 //BOOST_GEOMETRY_REGISTER_C_ARRAY_CS(bg::cs::cartesian)
 
-constexpr float SQRT_3 = 1.73205080757f;
-constexpr float R = 27.f;
-constexpr float W = R*2.f;
-constexpr float HALF_H = R*SQRT_3/2.f;
-constexpr float H = SQRT_3*R;
+#include "HexDim.hpp"
 
-constexpr float S = (R*3.f)/2.f;
+namespace wh=wand::hex;
+namespace whd=wand::hex::detail;
 
-constexpr float FLT_PREC = 0.0001f;
+constexpr whd::HexagonDim hex(27.f);
+constexpr float SQRT_3 = whd::HexagonDim::SQRT_3;
+constexpr float FLT_PREC = whd::HexagonDim::FLT_PREC;
+
+constexpr float R = hex.Radius();
+constexpr float W = hex.Width();
+constexpr float HALF_H = hex.HalfHeight();
+constexpr float H = hex.Height();
+constexpr float S = hex.Side();
+
+
+
+
+
 
 
 enum HexSide { NORTHWEST, NORTH, NORTHEAST, SOUTHEAST, SOUTH, SOUTHWEST };
@@ -33,9 +47,9 @@ bgm::segment< bgm::d2::point_xy<float> > hex_side(bgm::ring<bgm::d2::point_xy<fl
 
 #include "HexSpaceDebug.hpp"
 
-inline float round_two(float f)
+constexpr float round_two(float f)
 {
-	return floorf(0.5f + (f / FLT_PREC)) * FLT_PREC;
+	return std::floor(0.5f + (f / FLT_PREC)) * FLT_PREC;
 }
 
 
@@ -74,6 +88,7 @@ The size coordinates of the cell centered at (x,y) are:
 (    x + R/2,  y  +/- HALF_H )
 */
 #include <HexCell.hpp>
+
 
 /*
 	@param DEBUGPOLICY
@@ -291,6 +306,123 @@ West  \       /     South
 |--------| 1/2R + R
 
 */
+
+
+
+
+struct Hexagon
+{
+	typedef bgm::d2::point_xy<float> point_type;
+	typedef bgm::ring<point_type> ring_type;
+	typedef bgm::box<point_type> box_type;
+
+
+	Hexagon() = default;
+	Hexagon(Hexagon &&rhs) = default;
+	Hexagon& operator=(Hexagon const &) = default;
+
+	Hexagon(float x, float y)
+		: hex_center{x,y},
+		  hex_ring{HexPolygonGen{}(x,y)} {}
+	
+	float getX() const { return bg::get<0>(hex_center); }
+	float getY() const { return bg::get<1>(hex_center); }
+	ring_type const & getRing() const { return hex_ring; }
+
+	box_type getBB() const 
+	{ 
+		box_type bb;
+		bg::envelope(hex_ring,bb);
+		return bb;
+	}
+
+
+	private:
+	point     hex_center;
+	ring_type hex_ring;
+
+};
+
+
+template<std::size_t ROWS, std::size_t COLS>
+struct Hexagrid
+{
+	std::size_t n_rows;
+	std::size_t n_cols;
+/*
+	std::valarray?
+	std::array<> ?
+*/
+	//Hexagon grid[ROWS][COLS];
+	char memory[sizeof(Hexagon)*ROWS*COLS];
+	Hexagon *p_grid[ROWS*COLS];
+
+
+	Hexagon const& operator()(std::size_t x_r, std::size_t x_c) const
+	{
+	//	return *((Hexagon *)(p_grid[0]));
+		return *((Hexagon *)(p_grid[x_r*ROWS + x_c]));
+		//return reinterpret_cast<Hexagon const &>(p_grid[x_r*ROWS + x_c]);
+		//return reinterpret_cast<Hexagon const &>(p_grid[0]);
+	}
+
+
+	Hexagrid()
+		: n_rows(ROWS), n_cols(COLS)
+	{
+		memset(memory,'\0',sizeof(memory));
+		memset(p_grid,'\0',sizeof(p_grid));
+
+		for(std::size_t i = 0; i < ROWS;++i)
+		{
+			for(std::size_t j = 0; j < COLS;++j)
+			{
+				void* place = static_cast<void*>(memory) +
+					(i*ROWS + j)*alignof(Hexagon);
+
+
+				//Hexagon *h = (Hexagon *) new(place) 
+				Hexagon *h = new 
+					Hexagon( j * ((3* R)/2), ((j%2)* HALF_H) + (2*i*HALF_H));
+
+				p_grid[i*ROWS + j] = h;
+			}
+		}
+	}
+
+
+/*
+		for(int i = 0; i < ROWS;++i)
+		{
+			for(int j = 0; j < COLS;++j)
+			{// inplace ::new?
+				grid[i][j] = Hexagon( j * ((3* R)/2), ((j%2)* HALF_H) + (2*i*HALF_H));
+			}	
+		}
+*/
+
+	~Hexagrid()
+	{
+		for(int i = 0; i < ROWS;++i)
+		{
+			for(int j = 0; j < COLS;++j)
+			{
+
+				Hexagon *h;
+				if( ( h = p_grid[i*ROWS + j]) != 0)
+				{
+					p_grid[i*ROWS + j] = nullptr;
+					h->~Hexagon();
+				}
+			}
+		}
+		
+	}
+
+
+};
+
+
 
 
 

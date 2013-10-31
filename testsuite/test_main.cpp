@@ -34,7 +34,7 @@ int main()
 
 
 #if 0 
-/*SDL_Palette *tempPalette = 
+SDL_Palette *tempPalette = 
 	SDL_AllocPalette(5);
 
 //SDL_FreePalette(tempPalette);

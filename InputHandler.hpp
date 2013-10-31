@@ -109,7 +109,7 @@ namespace Wand {
 class KeyInput
 {
 public:
-	Uint8* m_keystate   = 0;
+	const Uint8* m_keystate;
 	Uint8* m_keyhistory = 0;
 	int num_keys;
 

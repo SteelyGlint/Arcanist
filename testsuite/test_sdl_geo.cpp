@@ -76,7 +76,7 @@ template<> struct render_dispatch<bg::ring_tag>
 	static inline void apply(SDL_Renderer *rend, Ring const& r)
 	{
 		std::size_t n_points = bg::num_points(r);
-		std::cout << "render_ring (num points " << n_points << "): " << bg::dsv(r) << std::endl;
+//		std::cout << "render_ring (num points " << n_points << "): " << bg::dsv(r) << std::endl;
 
 		for(std::size_t i = 0;i < n_points-1;++i)
 		{
@@ -119,23 +119,15 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 	typedef bgm::d2::point_xy<float> hex_point_type;
 	using bg::dsv;
 
-	constexpr std::size_t b_rows = 15;
-	constexpr std::size_t b_cols = 15;
+	constexpr std::size_t b_rows = 35;
+	constexpr std::size_t b_cols = 35;
 
 	Hexagrid<b_rows,b_cols> b;
 
 
-	bgm::box<hex_point_type> hexgrid_bbox = bg::make_inverse< bgm::box< hex_point_type> >();
 
-
-	for(std::size_t i = 0; i < b_cols;++i)
-	{
-		for(std::size_t j = 0;j < b_rows;++j)
-		{
-			std::cout << "bb i,j " << i << ',' << j << ": " <<	dsv(b(i,j).getBB()) << std::endl;
-			bg::expand(hexgrid_bbox, b(i,j).getBB());
-		}
-	}
+	bgm::box<hex_point_type> hexgrid_bbox;
+	bg::assign(hexgrid_bbox,b.m_bbox);
 
 	std::cout << "hexgrid bb" << dsv(hexgrid_bbox) << std::endl;
 
@@ -164,18 +156,17 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 		}
 	}
 
-	std::cout << "size of hexagon:" << sizeof(Hexagon) << std::endl;
-	std::cout << "alignof of hexagon:" << alignof(Hexagon) << std::endl;
-	std::cout << "alignment of hexagon:" << std::alignment_of<Hexagon>::value << std::endl;
 
 	SDL_RenderPresent(rend);
-	SDL_Delay(5000);
+	SDL_Delay(2000);
 
 
 
 	
 }
 
+
+#if 0
 void test_main2(SDL_Window *win, SDL_Renderer *rend)
 {
 	HexRingGen hGen;
@@ -239,6 +230,7 @@ void test_main2(SDL_Window *win, SDL_Renderer *rend)
 	draw(rend,dest_hexcell_ring2);
 
 	SDL_RenderPresent(rend);
-	SDL_Delay(5000);
+	//SDL_Delay(5000);
 
 }
+#endif

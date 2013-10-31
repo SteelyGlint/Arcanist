@@ -4,17 +4,24 @@
 #include <cmath>
 #include <complex>
 
+#include <boost/geometry/geometries/point_xy.hpp>
+
+namespace bgm=boost::geometry::model;
+
 namespace wand {
 namespace hex {
 
-constexpr float rnd(float x);
-constexpr bool same(float lhs, float rhs);
+//constexpr float rnd(float x);
+//constexpr bool same(float lhs, float rhs);
 
 
 namespace detail {
 
 constexpr float rnd(float x);
 constexpr bool same(float lhs, float rhs);
+
+
+typedef bgm::d2::point_xy<float> hex_point_type;
 
 
 

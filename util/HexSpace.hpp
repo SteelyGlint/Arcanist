@@ -39,15 +39,13 @@ constexpr float S = hex.Side();
 
 
 
-
-
-
 enum HexSide { NORTHWEST, NORTH, NORTHEAST, SOUTHEAST, SOUTH, SOUTHWEST };
+
 bgm::segment< bgm::d2::point_xy<float> > hex_side(bgm::ring<bgm::d2::point_xy<float> > const &h, HexSide s);
 
 #include "HexSpaceDebug.hpp"
 
-constexpr float round_two(float f)
+constexpr inline float round_two(float f)
 {
 	return std::floor(0.5f + (f / FLT_PREC)) * FLT_PREC;
 }
@@ -112,7 +110,6 @@ struct THexPolygonGen
 		float _x = round_two(x);
 		float _y = round_two(y);
 		
-/*
 		std::vector<point> pts{ 
 			{_x - R    , _y}, 
 			{_x - R/2.f, round_two(_y + HALF_H) },
@@ -123,7 +120,6 @@ struct THexPolygonGen
 			{_x - R    , _y}, // enclosing point for correct ring type
 		};
 /*
-*/
 		std::vector<point> pts;
 		pts.reserve(7);
 		pts.emplace_back(_x - R    , _y);
@@ -133,7 +129,7 @@ struct THexPolygonGen
 		pts.emplace_back(_x + R/2.f, _y - HALF_H);
 		pts.emplace_back(_x - R/2.f, _y - HALF_H);
 		pts.emplace_back(_x - R    , _y);
-
+*/
 		ring_type hex_ring(std::begin(pts),std::end(pts)); // order of points matters.. must be clockwise.
 
 		DEBUGPOLICY::verify(hex_ring);
@@ -228,8 +224,6 @@ struct hex_side_dispatch<SOUTHWEST>
 
 
 
-
-
 bgm::segment< bgm::d2::point_xy<float> > hex_side(bgm::ring<bgm::d2::point_xy<float> > const &h, const HexSide s)
 {
 	typedef bgm::segment< bgm::d2::point_xy<float> > seg_type;
@@ -265,19 +259,7 @@ bgm::segment< bgm::d2::point_xy<float> > hex_side(bgm::ring<bgm::d2::point_xy<fl
 
 typedef bgm::d2::point_xy<float> point;
 
-class consthex {
-	const std::tuple<float,float> hex_loc;
-	const std::vector<int> pts;
-public:
-	consthex(const float _x, const float _y) 
-		: hex_loc{std::make_tuple(_x,_y)},
-		pts{{2,5,7,5,2}} {}
 
-};
-
-
-
-//bgm::segment< bgm::d2::point_xy<float> > hex_side(bgm::ring<bgm::d2::point_xy<float> > const &h, HexSide s)
 
 /*
 	HexCoordinate is used to compute the coordinates of the neighbor
@@ -308,18 +290,11 @@ West  \       /     South
 */
 
 
-
-
 struct Hexagon
 {
 	typedef bgm::d2::point_xy<float> point_type;
 	typedef bgm::ring<point_type> ring_type;
 	typedef bgm::box<point_type> box_type;
-
-
-	Hexagon() = default;
-	Hexagon(Hexagon &&rhs) = default;
-	Hexagon& operator=(Hexagon const &) = default;
 
 	Hexagon(float x, float y)
 		: hex_center{x,y},
@@ -349,70 +324,51 @@ struct Hexagrid
 {
 	std::size_t n_rows;
 	std::size_t n_cols;
-/*
-	std::valarray?
-	std::array<> ?
-*/
-	//Hexagon grid[ROWS][COLS];
-	char memory[sizeof(Hexagon)*ROWS*COLS];
-	Hexagon *p_grid[ROWS*COLS];
 
+	typedef bgm::d2::point_xy<float> hex_point_type;
+
+	//Hexagon grid[ROWS][COLS];
+//	char memory[sizeof(Hexagon)*ROWS*COLS];
+
+	Hexagon *p_grid[ROWS*COLS];
+	bgm::box<hex_point_type> m_bbox;
 
 	Hexagon const& operator()(std::size_t x_r, std::size_t x_c) const
 	{
-	//	return *((Hexagon *)(p_grid[0]));
 		return *((Hexagon *)(p_grid[x_r*ROWS + x_c]));
-		//return reinterpret_cast<Hexagon const &>(p_grid[x_r*ROWS + x_c]);
-		//return reinterpret_cast<Hexagon const &>(p_grid[0]);
 	}
 
-
 	Hexagrid()
-		: n_rows(ROWS), n_cols(COLS)
+		: n_rows(ROWS), n_cols(COLS),m_bbox(bg::make_inverse< bgm::box<hex_point_type> >())
 	{
-		memset(memory,'\0',sizeof(memory));
 		memset(p_grid,'\0',sizeof(p_grid));
 
 		for(std::size_t i = 0; i < ROWS;++i)
 		{
 			for(std::size_t j = 0; j < COLS;++j)
 			{
-				void* place = static_cast<void*>(memory) +
-					(i*ROWS + j)*alignof(Hexagon);
-
-
-				//Hexagon *h = (Hexagon *) new(place) 
 				Hexagon *h = new 
 					Hexagon( j * ((3* R)/2), ((j%2)* HALF_H) + (2*i*HALF_H));
 
 				p_grid[i*ROWS + j] = h;
+
+				bg::expand(m_bbox,h->getBB());
 			}
 		}
 	}
 
 
-/*
-		for(int i = 0; i < ROWS;++i)
-		{
-			for(int j = 0; j < COLS;++j)
-			{// inplace ::new?
-				grid[i][j] = Hexagon( j * ((3* R)/2), ((j%2)* HALF_H) + (2*i*HALF_H));
-			}	
-		}
-*/
-
 	~Hexagrid()
 	{
-		for(int i = 0; i < ROWS;++i)
+		for(std::size_t i = 0; i < ROWS;++i)
 		{
-			for(int j = 0; j < COLS;++j)
+			for(std::size_t j = 0; j < COLS;++j)
 			{
-
 				Hexagon *h;
 				if( ( h = p_grid[i*ROWS + j]) != 0)
 				{
 					p_grid[i*ROWS + j] = nullptr;
-					h->~Hexagon();
+					delete h;
 				}
 			}
 		}

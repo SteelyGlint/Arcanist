@@ -9,11 +9,14 @@
 #include <boost/geometry/geometries/register/box.hpp>
 
 #include <util/HexSpace.hpp>
+#include <Mote.hpp>
 
 #include <SDL.h>
 
 namespace bg=boost::geometry;
 namespace bgm=boost::geometry::model;
+
+using namespace Wand;
 
 std::ostream& operator<<(std::ostream &os, SDL_BBox &b)
 {
@@ -38,7 +41,12 @@ std::ostream& operator<<(std::ostream &os, SDL_BBox &b)
 
 typedef THexPolygonGen<NoVerifyHexRing> HexRingGen;
 typedef THexPolygonGen<NoVerifyHexRing>::point hex_point_type;
-typedef THexPolygonGen<NoVerifyHexRing>::ring_type hex_ring_type;
+
+typedef bgm::ring<hex_point_type> hex_ring_type;
+
+typedef bgm::d2::point_xy<int> pixel_point_type;
+typedef bgm::ring<pixel_point_type> pixel_ring_type;
+
 
 namespace trans=boost::geometry::strategy::transform;
 
@@ -49,6 +57,21 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry);
 
 
 template<typename Tag> struct render_dispatch {};
+
+
+template<> struct render_dispatch<bg::point_tag>
+{
+	template <typename Point>
+	static inline void apply(SDL_Renderer *rend, Point const& p)
+	{
+		if(SDL_RenderDrawPoint(rend,bg::get<0>(p),bg::get<1>(p)) < 0)
+		{
+			std::cout << SDL_GetError() << std::endl;
+		}
+	}
+
+};
+	
 
 template<> struct render_dispatch<bg::segment_tag>
 {
@@ -81,7 +104,8 @@ template<> struct render_dispatch<bg::ring_tag>
 		for(std::size_t i = 0;i < n_points-1;++i)
 		{
 			typedef bgm::segment<
-				bgm::d2::point_xy<float> > segment_type;
+					bgm::d2::point_xy<int>
+				 > segment_type;
 
 			draw(rend,segment_type(r[i],r[i+1]));
 		}
@@ -108,6 +132,16 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry)
 	>::apply(rend,geometry);
 }
 
+inline void draw(SDL_Renderer *rend, Mote const &m)
+{
+
+	if(SDL_RenderDrawPoint(rend,bg::get<0>(m.position),bg::get<1>(m.position)) < 0)
+	{
+		std::cout << SDL_GetError() << std::endl;
+	}
+
+}
+
 
 
 
@@ -116,15 +150,12 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry)
 
 void test_main(SDL_Window *win, SDL_Renderer *rend)
 {
-	typedef bgm::d2::point_xy<float> hex_point_type;
 	using bg::dsv;
 
-	constexpr std::size_t b_rows = 35;
-	constexpr std::size_t b_cols = 35;
+	constexpr std::size_t b_rows = 8;
+	constexpr std::size_t b_cols = 2;
 
 	Hexagrid<b_rows,b_cols> b;
-
-
 
 	bgm::box<hex_point_type> hexgrid_bbox;
 	bg::assign(hexgrid_bbox,b.m_bbox);
@@ -137,32 +168,26 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 				 << " height: " << win_h << std::endl;
 
 
-
-	trans::map_transformer<hex_point_type,hex_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
-
+	trans::map_transformer<hex_point_type,pixel_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
 
 	SDL_SetRenderDrawColor(rend,0,0,0,255);
 	SDL_RenderClear(rend);
 
 
 	SDL_SetRenderDrawColor(rend,255,128,255,255);
-	for(std::size_t i = 0; i < b_cols;++i)
+	for(std::size_t i = 0; i < b_rows;++i)
 	{
-		for(std::size_t j = 0;j < b_rows;++j)
+		for(std::size_t j = 0;j < b_cols;++j)
 		{
-			hex_ring_type dest_hexcell_ring;
+			pixel_ring_type dest_hexcell_ring;
 			assert(bg::transform(b(i,j).getRing(),dest_hexcell_ring,map_hex_to_pixel));
 			draw(rend,dest_hexcell_ring);
 		}
 	}
 
-
 	SDL_RenderPresent(rend);
 	SDL_Delay(2000);
 
-
-
-	
 }
 
 

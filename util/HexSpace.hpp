@@ -335,7 +335,9 @@ struct Hexagrid
 
 	Hexagon const& operator()(std::size_t x_r, std::size_t x_c) const
 	{
-		return *((Hexagon *)(p_grid[x_r*ROWS + x_c]));
+		assert(x_r < ROWS);
+		assert(x_c < COLS);
+		return *((Hexagon *)(p_grid[x_r*COLS + x_c]));
 	}
 
 	Hexagrid()
@@ -348,9 +350,9 @@ struct Hexagrid
 			for(std::size_t j = 0; j < COLS;++j)
 			{
 				Hexagon *h = new 
-					Hexagon( j * ((3* R)/2), ((j%2)* HALF_H) + (2*i*HALF_H));
+					Hexagon(R + j * ((3* R)/2), HALF_H+ ((j%2)* HALF_H) + (2*i*HALF_H));
 
-				p_grid[i*ROWS + j] = h;
+				p_grid[i*COLS + j] = h;
 
 				bg::expand(m_bbox,h->getBB());
 			}
@@ -365,9 +367,9 @@ struct Hexagrid
 			for(std::size_t j = 0; j < COLS;++j)
 			{
 				Hexagon *h;
-				if( ( h = p_grid[i*ROWS + j]) != 0)
+				if( ( h = p_grid[i*COLS + j]) != 0)
 				{
-					p_grid[i*ROWS + j] = nullptr;
+					p_grid[i*COLS + j] = nullptr;
 					delete h;
 				}
 			}

@@ -28,37 +28,38 @@ namespace space {
 constexpr float SQRT_3 = ::wand::hex::detail::SQRT_3;
 constexpr float FLT_PREC = ::wand::hex::detail::FLT_PREC;
 
-constexpr HexagonDim hex(27.f);
+//constexpr HexagonDim hex(27.f);
 
 
 }
 
 namespace detail {
 
-template<typename S>
-struct hex_points;
 
+/*
+	flat <--> pointy
 
-template<>
-struct hex_points<hex_shape_flat_tag>
-{
+swapping the input coordinates (i.e. "mirror" them around the diagonal): x<->y or i<->j;
+applying the formulas as described above;
+swapping the output coordinates back ("unmirroring" them): i<->j, x<->y.
+*/
 	template<typename T, typename Point = bgm::d2::point_xy<T> >
-	static inline std::vector<Point> apply(T _x, T _y, T HALF_H, T R)
+	static inline std::vector<Point> fill_points(T _x, T _y, T HALF_H, T R)
 	{
 		std::vector<Point> pts{ 
 			{_x - R    , _y}, 
-			{_x - R/2.f, round_two(_y + HALF_H) },
-			{_x + R/2.f, round_two(_y + HALF_H) },
+			{_x - R/2.f, _y + HALF_H },
+			{_x + R/2.f, _y + HALF_H },
 			{_x + R    , _y},
-			{_x + R/2.f, round_two(_y - HALF_H) },
-			{_x - R/2.f, round_two(_y - HALF_H) },
+			{_x + R/2.f, _y - HALF_H },
+			{_x - R/2.f, _y - HALF_H },
 			{_x - R    , _y}
 		};
 
 		return pts;
 	}
-};
 
+/*
 template<>
 struct hex_points<hex_shape_pointy_tag>
 {
@@ -79,9 +80,9 @@ struct hex_points<hex_shape_pointy_tag>
 		return pts;
 	}
 
-
 };
 
+*/
 
 }
 
@@ -133,7 +134,7 @@ The size coordinates of the cell centered at (x,y) are:
 template<typename T>
 struct THexPolygonGen
 {
-private:
+//private:
 	const float R;// = hex.Radius();
 	const float W;// = hex.Width();
 	const float HALF_H;// = hex.HalfHeight();
@@ -159,7 +160,6 @@ public:
 public:
 	using point_type = bgm::d2::point_xy<T>;
 	using ring_type = bgm::ring<point_type>;
-	using hex_type = hex_shape_flat_tag;
 
 	template<typename Point>
 	inline ring_type operator()(const Point& p)
@@ -168,11 +168,8 @@ public:
 	inline ring_type operator()(T x,T y)
 	{
 
-		T _x = round_two(x);
-		T _y = round_two(y);
-		
 		std::vector<point_type> pts{
-			detail::hex_points<hex_shape_pointy_tag>::apply(x,y, HALF_H, R)
+			detail::fill_points(x,y, HALF_H, R)
 		};
 /*
 		std::vector<point_type> pts;
@@ -190,19 +187,10 @@ public:
 //		DEBUGPOLICY::verify(hex_ring);
 		return hex_ring;
 	}
+
+
 };
 
-
-
-//template<typename T>
-//using PointyHexPolygonGen=THexPolygonGen<T,hex_shape_pointy_tag>;
-
-//template<typename T>
-//using FlatHexPolygonGen=THexPolygonGen<T,hex_shape_flat_tag>;
-
-
-
-//template PointyHexPolygonGen<float>;
 
 
 } }

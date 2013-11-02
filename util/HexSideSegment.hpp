@@ -15,6 +15,9 @@ namespace hex {
 
 namespace detail {
 
+struct hex_shape_flat_tag {};
+	enum HexSide { NORTHWEST, NORTH, NORTHEAST, SOUTHEAST, SOUTH, SOUTHWEST };
+
 template<typename T, typename S, size_t SIDE>
 struct hex_side_dispatch {};
 

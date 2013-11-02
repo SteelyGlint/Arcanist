@@ -12,30 +12,6 @@ namespace bgm=boost::geometry::model;
 namespace wand {
 namespace hex {
 
-struct hex_shape_flat_tag {};
-struct hex_shape_pointy_tag {};
-
-template<typename S>
-struct PolygonSides;
-/*
-{
-	static_assert(false,"invalid hex shape specialization");
-};
-*/
-template<>
-struct PolygonSides<hex_shape_flat_tag>
-{
-	enum HexSide { NORTHWEST, NORTH, NORTHEAST, SOUTHEAST, SOUTH, SOUTHWEST };
-	typedef hex_shape_flat_tag type;
-};
-
-template<>
-struct PolygonSides<hex_shape_pointy_tag>
-{
-	enum HexSide { WEST, NORTHWEST, NORTHEAST, EAST, SOUTHEAST, SOUTHWEST, };
-	typedef hex_shape_pointy_tag type;
-};
-
 
 
 namespace detail {

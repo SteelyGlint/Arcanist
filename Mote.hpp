@@ -31,8 +31,8 @@ struct Mote
 	std::array<Component,NUM_COMPONENTS_PER_MOTE> components;
 	std::bitset<NUM_ELEMENTS> elements;
 
-	typedef wand::hex::detail::hex_point_type point_type;
-	wand::hex::detail::hex_point_type position;
+	typedef std::pair<int,int> point_type;
+	point_type position;
 
 	template<typename Comp>
 	bool add(Comp&& c);

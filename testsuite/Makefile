@@ -1,5 +1,5 @@
 CC=g++
-INCLUDES=-I/usr/include/SDL2 -I.. -I. -Iutil/ -g
+INCLUDES=-I/usr/include/SDL2 -I.. -I. -I../util/ -g
 #DFLAGS=-fprofile-arcs -ftest-coverage -g -pg -O0
 
 CFLAGS=-O2 $(INCLUDES) $(DFLAGS) -std=c++11 -Wall #-pedantic -Werror

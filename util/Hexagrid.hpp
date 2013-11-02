@@ -61,11 +61,13 @@ struct Hexagrid
 		return *((Hexagon<T> *)(p_grid[x_r*n_cols + x_c]));
 	}
 
-	Hexagrid(std::size_t n_rows, std::size_t n_cols, HexagonDim hex = space::hex)
-		: n_rows(n_rows), n_cols(n_cols),m_bbox(bg::make_inverse< box_type >())
+	THexPolygonGen<T> hex_dim;
+
+	Hexagrid(std::size_t n_rows, std::size_t n_cols, THexPolygonGen<T> hgen = THexPolygonGen<T>{})
+		: n_rows(n_rows), n_cols(n_cols),m_bbox(bg::make_inverse< box_type >()),hex_dim(hgen)
 	{
-		const float R = hex.Width();
-		const float HALF_H = hex.HalfHeight();
+		const float R = hex_dim.R;
+		const float HALF_H = hex_dim.HALF_H;
 
 		p_grid = new Hexagon<T>*[n_rows*n_cols];
 		memset(p_grid,'\0',sizeof(p_grid)*(n_rows*n_cols));
@@ -75,7 +77,7 @@ struct Hexagrid
 			for(std::size_t j = 0; j < n_cols;++j)
 			{
 				Hexagon<T> *h = new 
-					Hexagon<T>(R + j * ((3* R)/2), HALF_H+ ((j%2)* HALF_H) + (2*i*HALF_H));
+					Hexagon<T>(R + j * ((3* R)/2), HALF_H+ ((j%2)* HALF_H) + (2*i*HALF_H),hex_dim);
 
 				p_grid[i*n_cols + j] = h;
 

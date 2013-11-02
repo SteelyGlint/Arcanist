@@ -8,7 +8,7 @@
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
 
-#include <util/HexSpace.hpp>
+#include <util/Hex.hpp>
 #include <Mote.hpp>
 #include <util/Demangler.hpp>
 
@@ -40,9 +40,7 @@ std::ostream& operator<<(std::ostream &os, SDL_BBox &b)
 }
 
 
-typedef THexPolygonGen<NoVerifyHexRing> HexRingGen;
-typedef THexPolygonGen<NoVerifyHexRing>::point hex_point_type;
-
+typedef bgm::d2::point_xy<float> hex_point_type;
 typedef bgm::ring<hex_point_type> hex_ring_type;
 
 typedef bgm::d2::point_xy<int> pixel_point_type;
@@ -145,7 +143,9 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 	constexpr std::size_t b_rows = 8;
 	constexpr std::size_t b_cols = 2;
 
-	Hexagrid<b_rows,b_cols> b;
+	wand::hex::Hexagrid<float> b(b_rows,b_cols);
+
+
 
 	bgm::box<hex_point_type> hexgrid_bbox;
 	bg::assign(hexgrid_bbox,b.m_bbox);

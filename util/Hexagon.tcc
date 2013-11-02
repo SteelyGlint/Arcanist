@@ -45,7 +45,7 @@ struct Hexagon
 	using ring_type = bgm::ring<point_type>;
 	using box_type = bgm::box<point_type>;
 
-	Hexagon(T x, T y);
+	Hexagon(T x, T y, THexPolygonGen<T> hgen);
 	
 	T getX() const;
 	T getY() const;
@@ -63,9 +63,9 @@ struct Hexagon
 
 
 template<typename T>
-inline Hexagon<T>::Hexagon(T x, T y)
+inline Hexagon<T>::Hexagon(T x, T y, THexPolygonGen<T> hgen)
 	: hex_center{x,y},
-	  hex_ring(THexPolygonGen<T>{}(x,y)) {}
+	  hex_ring(hgen(x,y)) {}
 
 
 template<typename T>

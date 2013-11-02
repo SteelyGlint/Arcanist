@@ -145,17 +145,16 @@ void print_ring_info(LineSeg &r)
 
 int main()
 {
-typedef boost::geometry::model::d2::point_xy<float> point_type;
-typedef boost::geometry::model::segment<point_type> lineseg_type;
+	typedef boost::geometry::model::d2::point_xy<float> point_type;
+	typedef boost::geometry::model::segment<point_type> lineseg_type;
 
 	lineseg_type x(point_type(1,1),point_type(0,0));
 	lineseg_type x2(point_type(1,0),point_type(0,1));
+
 	print_ring_info(x);
 	print_ring_info(x2);
 
-
 	assert(bg::intersects(x,x2));
-
 
 	std::deque<point_type> i_pts;
 

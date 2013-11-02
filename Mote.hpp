@@ -30,24 +30,19 @@ struct Mote
 	std::size_t size = 0;
 	std::array<Component,NUM_COMPONENTS_PER_MOTE> components;
 	std::bitset<NUM_ELEMENTS> elements;
+
+	typedef wand::hex::detail::hex_point_type point_type;
 	wand::hex::detail::hex_point_type position;
 
 	template<typename Comp>
-	bool add(Comp &&c);
+	bool add(Comp&& c);
 
-	uint32_t weight()
-	{
-		uint32_t ret = 0;
-		for(std::size_t i = 0; i < size;++i)
-			ret += components[i].weight();
-		return ret;
-	}
+	uint32_t weight();
 
 };
 
-
 template<typename Comp>
-bool Mote::add(Comp &&c)
+bool Mote::add(Comp&& c)
 {
 	if(size == NUM_COMPONENTS_PER_MOTE)
 		return false;
@@ -57,6 +52,13 @@ bool Mote::add(Comp &&c)
 	return true;
 }
 
+uint32_t Mote::weight()
+{
+	uint32_t ret = 0;
+	for(std::size_t i = 0; i < size;++i)
+		ret += components[i].weight();
+	return ret;
+}
 
 
 

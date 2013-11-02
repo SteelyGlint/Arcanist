@@ -46,7 +46,7 @@ typedef HexRingGen::point point_type;
 
 namespace bg=boost::geometry;
 
-vector<point_type> CreateCommonAccessPattern(int size,int w = 10,int h = 10)
+vector<point_type> CreateCommonAccessPattern(int size,float w = 10,float h = 10)
 {
 	ClockStart();
 	vector<point_type> idx_vec(size);
@@ -100,35 +100,37 @@ void ClockEnd()
 }
 
 
-template<typename KEY = int, typename VALUE = int,intmax_t TRIALS = 10000>
+template<std::size_t ROW, std::size_t COL>
 class AccessExperiment
 {
 	public:
-	HexRingGen hGen;
+	Hexagrid<ROW,COL> hgrid;
 
 	vector<point_type> access_idx;
-
 	int size;
+
 	explicit
 	AccessExperiment(int _size = 10000)
-		: access_idx(CreateCommonAccessPattern(_size)), size(_size)
+		: hgrid(), access_idx(CreateCommonAccessPattern(_size,W*ROW,H*COL)), size(_size)
 	{
+	}
 
+	void clock_hgrid_bb_check()
+	{
+		typedef Hexagon::box_type hex_box_type;
+		hex_box_type hbbox = hgrid.getBB();
+
+
+		int success = 0;
 		ClockStart();
 		for(auto const &p : access_idx)
 		{
-			hGen(bg::get<0>(p),bg::get<1>(p));
+			if(bg::covered_by(p,hbbox))
+				++success;
 		}
 		ClockEnd();
 
-		ClockStart();
-		for(auto const &p : access_idx)
-		{
-			hGen(p);
-		}
-		ClockEnd();
-
-
+		std::printf("%d / %d random points were contained in the hexagrid bbox\n", success, size);
 	}
 
 }; 
@@ -138,5 +140,6 @@ class AccessExperiment
 int main()
 {
 	ClockStart();
-	AccessExperiment<> ex;
+	AccessExperiment<10,10> ex;
+	ex.clock_hgrid_bb_check();
 }

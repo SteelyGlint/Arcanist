@@ -1,6 +1,7 @@
 #include <util/HexDim.hpp>
 
 #include <iostream>
+#include <util/Demangler.hpp>
 #include <iomanip>
 #include <stdexcept>
 #include <utility>                                                    
@@ -12,6 +13,10 @@
 #include <boost/geometry/geometries/ring.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
+
+
+#include <boost/mpl/vector_c.hpp>
+
                                                                       
 namespace bg=boost::geometry;                                         
 namespace bgm=boost::geometry::model;                                 
@@ -51,6 +56,24 @@ int main()
 
 	print_info(hex);
 
+
+	typedef boost::mpl::vector_c< std::size_t, 1, 2, 3, 4, 5>::type value_types;
+
+	value_types v;
+	std::cout << typeid(v) << std::endl;
+
+
+#if 0 
+	std::vector<point> pts{ 
+		{_x - R    , _y}, 
+		{_x - R/2.f, round_two(_y + HALF_H) },
+		{_x + R/2.f, round_two(_y + HALF_H) },
+		{_x + R    , _y},
+		{_x + R/2.f, round_two(_y - HALF_H) },
+		{_x - R/2.f, round_two(_y - HALF_H) },
+		{_x - R    , _y}, // enclosing point for correct ring type
+	};
+#endif
 
 
 

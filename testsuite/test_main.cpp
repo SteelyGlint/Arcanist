@@ -25,7 +25,6 @@ int main()
 	if(rend == 0)
 		return 0;
 
-
 	test_main(win,rend);
 	SDL_Quit();
 

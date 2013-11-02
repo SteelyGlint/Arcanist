@@ -10,6 +10,7 @@
 
 #include <util/HexSpace.hpp>
 #include <Mote.hpp>
+#include <util/Demangler.hpp>
 
 #include <SDL.h>
 
@@ -132,17 +133,6 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry)
 	>::apply(rend,geometry);
 }
 
-inline void draw(SDL_Renderer *rend, Mote const &m)
-{
-
-	if(SDL_RenderDrawPoint(rend,bg::get<0>(m.position),bg::get<1>(m.position)) < 0)
-	{
-		std::cout << SDL_GetError() << std::endl;
-	}
-
-}
-
-
 
 
 
@@ -191,71 +181,3 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 }
 
 
-#if 0
-void test_main2(SDL_Window *win, SDL_Renderer *rend)
-{
-	HexRingGen hGen;
-
-	SDL_Point p1{0,0};
-
-
-	typedef bg::point_type<SDL_BBox>::type sdl_point_type;
-	typedef bgm::d2::point_xy<float> hex_point_type;
-
-	hex_ring_type hexcell_ring(hGen(p1));
-
-	hex_ring_type hexcell_ring2(hGen(55,35));
-
-
-// Get BBox of hexring Polygon
-	bgm::box<hex_point_type> hbox;
-	bgm::box<hex_point_type> hbox2;
-
-	bg::envelope(hexcell_ring,hbox);
-	bg::envelope(hexcell_ring2,hbox2);
-
-	using bg::dsv;
-
-	std::cout << "hex polygon: " << dsv(hexcell_ring) << std::endl;
-	std::cout << "bounding box: " << dsv(hbox) << std::endl;
-
-	std::cout << "hex polygon2: " << dsv(hexcell_ring2) << std::endl;
-	std::cout << "bounding box: " << dsv(hbox2) << std::endl;
-
-	int win_w, win_h;
-	SDL_GetWindowSize(win,&win_w,&win_h);
-	std::cout << "Window widith: " << win_w
-				 << " height: " << win_h << std::endl;
-
-
-	bgm::box<hex_point_type> hexgrid_bbox = bg::make_inverse< bgm::box< hex_point_type> >();;
-
-
-	bg::expand(hexgrid_bbox, hbox);
-	bg::expand(hexgrid_bbox, hbox2);
-
-
-	trans::map_transformer<hex_point_type,hex_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
-
-	hex_ring_type dest_hexcell_ring;
-	hex_ring_type dest_hexcell_ring2;
-
-	assert(bg::transform(hexcell_ring,dest_hexcell_ring,map_hex_to_pixel));
-	assert(bg::transform(hexcell_ring2,dest_hexcell_ring2,map_hex_to_pixel));
-
-	std::cout << "dest hex polygon: " << dsv(dest_hexcell_ring) << std::endl;
-	std::cout << "dest hex polygon2: " << dsv(dest_hexcell_ring2) << std::endl;
-
-	SDL_SetRenderDrawColor(rend,0,0,0,255);
-	SDL_RenderClear(rend);
-
-	SDL_SetRenderDrawColor(rend,255,128,255,255);
-	draw(rend,dest_hexcell_ring);
-	SDL_SetRenderDrawColor(rend,128,255,128,255);
-	draw(rend,dest_hexcell_ring2);
-
-	SDL_RenderPresent(rend);
-	//SDL_Delay(5000);
-
-}
-#endif

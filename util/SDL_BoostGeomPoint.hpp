@@ -17,6 +17,8 @@ struct SDL_BBox
 
 	operator SDL_Rect();
 	SDL_BBox(SDL_Rect const& rhs);
+
+	SDL_BBox() = default;
 };
 
 BOOST_GEOMETRY_REGISTER_BOX(SDL_BBox, SDL_Point, ll, ur);

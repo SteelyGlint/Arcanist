@@ -44,7 +44,7 @@ applying the formulas as described above;
 swapping the output coordinates back ("unmirroring" them): i<->j, x<->y.
 */
 	template<typename T, typename Point = bgm::d2::point_xy<T> >
-	static inline std::vector<Point> fill_points(T _x, T _y, T HALF_H, T R)
+	static inline std::vector<Point> fill_points_flat(T _x, T _y, T HALF_H, T R)
 	{
 		std::vector<Point> pts{ 
 			{_x - R    , _y}, 
@@ -59,14 +59,10 @@ swapping the output coordinates back ("unmirroring" them): i<->j, x<->y.
 		return pts;
 	}
 
-/*
-template<>
-struct hex_points<hex_shape_pointy_tag>
-{
-
 	template<typename T, typename Point = bgm::d2::point_xy<T> >
-	static inline std::vector<Point> apply(T _x, T _y, T HALF_H, T R)
+	static inline std::vector<Point> fill_points_pointy(T _x, T _y, T HALF_H, T R)
 	{
+
 		std::vector<Point> pts{ 
 			{_x - HALF_H,   _y + R/2.f}, 
 			{_x    , _y + R},
@@ -80,11 +76,8 @@ struct hex_points<hex_shape_pointy_tag>
 		return pts;
 	}
 
-};
 
-*/
-
-}
+} /* namespace detail */
 
 
 /*
@@ -153,10 +146,6 @@ public:
 		return std::floor(0.5f + (f / space::FLT_PREC)) * space::FLT_PREC;
 	}
 
-/*
-	todo:
-  use bg::point_traits
-*/
 public:
 	using point_type = bgm::d2::point_xy<T>;
 	using ring_type = bgm::ring<point_type>;
@@ -167,24 +156,10 @@ public:
 
 	inline ring_type operator()(T x,T y)
 	{
-
 		std::vector<point_type> pts{
-			detail::fill_points(x,y, HALF_H, R)
+			detail::fill_points_flat(x,y, HALF_H, R)
 		};
-/*
-		std::vector<point_type> pts;
-		pts.reserve(7);
-		pts.emplace_back(_x - R    , _y);
-		pts.emplace_back(_x - R/2.f, _y + HALF_H);
-		pts.emplace_back(_x + R/2.f, _y + HALF_H);
-		pts.emplace_back(_x + R    , _y);
-		pts.emplace_back(_x + R/2.f, _y - HALF_H);
-		pts.emplace_back(_x - R/2.f, _y - HALF_H);
-		pts.emplace_back(_x - R    , _y);
-*/
 		ring_type hex_ring(std::begin(pts),std::end(pts)); // order of points matters.. must be clockwise.
-
-//		DEBUGPOLICY::verify(hex_ring);
 		return hex_ring;
 	}
 

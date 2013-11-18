@@ -13,6 +13,11 @@
 #include <util/Demangler.hpp>
 
 #include <SDL.h>
+#include <SDL_image.h>
+
+
+#include <assets/XPMLoader.hpp>
+#include <assets/HexCellBorder.xpm>
 
 namespace bg=boost::geometry;
 namespace bgm=boost::geometry::model;
@@ -41,9 +46,11 @@ std::ostream& operator<<(std::ostream &os, SDL_BBox &b)
 
 
 typedef bgm::d2::point_xy<float> hex_point_type;
+typedef bgm::box<hex_point_type> hex_box_type;
 typedef bgm::ring<hex_point_type> hex_ring_type;
 
 typedef bgm::d2::point_xy<int> pixel_point_type;
+typedef bgm::box<pixel_point_type> pixel_box_type;
 typedef bgm::ring<pixel_point_type> pixel_ring_type;
 
 
@@ -99,15 +106,26 @@ template<> struct render_dispatch<bg::ring_tag>
 	{
 		std::size_t n_points = bg::num_points(r);
 //		std::cout << "render_ring (num points " << n_points << "): " << bg::dsv(r) << std::endl;
+		typedef bgm::segment<
+				bgm::d2::point_xy<int>
+			 > segment_type;
 
+
+		SDL_SetRenderDrawColor(rend,255,128,255,255);
 		for(std::size_t i = 0;i < n_points-1;++i)
 		{
-			typedef bgm::segment<
-					bgm::d2::point_xy<int>
-				 > segment_type;
-
 			draw(rend,segment_type(r[i],r[i+1]));
 		}
+
+
+		bgm::d2::point_xy<int> center_pt;
+		bg::centroid(r,center_pt);
+		SDL_SetRenderDrawColor(rend,34,34,34,255);
+
+		for(std::size_t i = 0;i < n_points-1;++i)
+		draw(rend,segment_type(r[i],center_pt));
+		//draw(rend,segment_type(r[2],center_pt));
+		//draw(rend,segment_type(r[4],center_pt));
 	}
 };
 
@@ -140,21 +158,21 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 {
 	using bg::dsv;
 
-	constexpr std::size_t b_rows = 8;
-	constexpr std::size_t b_cols = 2;
+	constexpr std::size_t b_rows = 2;
+	constexpr std::size_t b_cols = 1;
 
 	wand::hex::Hexagrid<float> b(b_rows,b_cols);
 
 
 
 	bgm::box<hex_point_type> hexgrid_bbox;
-	bg::assign(hexgrid_bbox,b.m_bbox);
+	bg::assign(hexgrid_bbox,b.getBB());
 
 	std::cout << "hexgrid bb" << dsv(hexgrid_bbox) << std::endl;
 
 	int win_w, win_h;
 	SDL_GetWindowSize(win,&win_w,&win_h);
-	std::cout << "Window widith: " << win_w
+	std::cout << "Window width: " << win_w
 				 << " height: " << win_h << std::endl;
 
 
@@ -164,7 +182,20 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 	SDL_RenderClear(rend);
 
 
-	SDL_SetRenderDrawColor(rend,255,128,255,255);
+	SDL_Surface* pTempSurface = IMG_ReadXPMFromArray(XPMLoadFromStaticCharArray(HexCell_xpm));
+	Uint32 t_pixel = SDL_MapRGB(pTempSurface->format,0xff,0xff,0xff);
+
+	if(SDL_SetColorKey(pTempSurface,SDL_TRUE,t_pixel) < 0)
+	{
+		std::cout << "Couldn't set alpha pixel: " << SDL_GetError() << std::endl;
+		SDL_FreeSurface(pTempSurface);
+		return;
+	}
+	SDL_Texture* pTexture = SDL_CreateTextureFromSurface(rend, pTempSurface);
+
+	SDL_FreeSurface(pTempSurface);
+
+
 	for(std::size_t i = 0; i < b_rows;++i)
 	{
 		for(std::size_t j = 0;j < b_cols;++j)
@@ -172,6 +203,15 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 			pixel_ring_type dest_hexcell_ring;
 			assert(bg::transform(b(i,j).getRing(),dest_hexcell_ring,map_hex_to_pixel));
 			draw(rend,dest_hexcell_ring);
+
+			SDL_BBox destCell;
+			bg::envelope(dest_hexcell_ring,destCell);
+
+			{
+					
+				SDL_Rect destRect((SDL_Rect)destCell);
+				SDL_RenderCopy(rend,pTexture,NULL,&destRect);
+			}
 		}
 	}
 

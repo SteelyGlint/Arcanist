@@ -51,7 +51,10 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 		return false;
 	}
 
-	TheInputHandler::Instance()->init();
+	if(!TheInputHandler::Instance()->init())
+	{
+		return false;
+	}
 
 	return true;
 }

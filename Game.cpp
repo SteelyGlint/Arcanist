@@ -3,6 +3,7 @@
 #include "Game.hpp"
 #include "InputHandler.hpp"
 #include "TextureManager.hpp"
+#include "GraphicalHexGrid.hpp"
 #include "DebugRender.hpp"
 
 
@@ -20,7 +21,7 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return false;
 
-	win = SDL_CreateWindow(title.c_str(), x, y, width, height, flags);
+	SDL_CreateWindowAndRenderer(0,0,flags,&win,&rend);
 
 	if( win == 0 )
 		return false;
@@ -29,6 +30,10 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 
 	if(rend == 0)
 		return false;
+
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
+	SDL_RenderSetLogicalSize(rend, width, height);
+
 
 	print_render_info(rend);
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
@@ -56,12 +61,17 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 		return false;
 	}
 
+	if(!TheHexGrid::Instance()->init(win_w,win_h,11,23))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 void Game::draw()
 {
-	//TheHexGrid::Instance()->draw();
+	TheHexGrid::Instance()->draw();
 	TheGlyphController::Instance()->draw();
 	TheMoteMovementManager::Instance()->draw();
 }
@@ -108,6 +118,7 @@ void Game::update()
 
 void Game::quit()
 {
+	std::cerr << "Game::quit()\n";
 	m_bRunning = false;
 }
 

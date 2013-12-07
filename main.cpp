@@ -38,12 +38,18 @@ void playback_func(SDL_Scancode key, bool pressed)
 	}
 }
 
+void quit_func(SDL_Scancode key, bool pressed)
+{
+	Game::Instance()->quit();
+}
+
 int main()
 {
 	const string win_title{"Particle Test"};
 
-	assert(TheGame::Instance()->init("Particle Test",SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,640,480,SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL));
+	assert(TheGame::Instance()->init("Particle Test"));
 		
+   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_ESCAPE,&quit_func);
    TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_SPACE,&pause_func);
    TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEUP,&playback_func);
    TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEDOWN,&playback_func);

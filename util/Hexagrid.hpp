@@ -3,12 +3,15 @@
 
 #include <cstdint>
 #include <cassert>
+#include <functional>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/ring.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/segment.hpp>
+#include <boost/geometry/algorithms/transform.hpp>
 #include <boost/geometry/algorithms/expand.hpp>
 #include <boost/geometry/algorithms/make.hpp>
+#include <boost/geometry/strategies/transform/map_transformer.hpp>
 
 
 
@@ -16,6 +19,7 @@
 
 namespace bg=boost::geometry;
 namespace bgm=boost::geometry::model;
+namespace trans=boost::geometry::strategy::transform;
 
 namespace wand {
 namespace hex {
@@ -29,8 +33,13 @@ struct Hexagrid
 	const std::size_t n_cols;
 
 public:
-	using hex_point_type = bgm::d2::point_xy<float>;
+	using hex_point_type = bgm::d2::point_xy<T>;
 	using box_type = bgm::box<hex_point_type>;
+
+	template<typename Point, bool SameScale = true>
+	using transformer_type = trans::map_transformer<hex_point_type, Point,true, SameScale>;
+
+
 private:
 	Hexagon<T> **p_grid;
 	box_type m_bbox;
@@ -72,7 +81,7 @@ public:
 
 
 	Hexagrid(std::size_t n_rows, std::size_t n_cols, THexPolygonGen<T> hgen = THexPolygonGen<T>{})
-		: n_rows(n_rows), n_cols(n_cols),m_bbox(bg::make_inverse< box_type >()),hex_dim(hgen), f_off_x(hex_dim.R), f_off_y(hex_dim.HALF_H)
+		: n_rows(n_rows), n_cols(n_cols),m_bbox(bg::make_inverse< box_type >()),hex_dim(hgen), f_off_x(hex_dim.R), f_off_y(hex_dim.HALF_H), m_PointToHexCoordinate{hex_dim.R,hex_dim.S,hex_dim.H}
 	{
 		const float R = hex_dim.R;
 		const float HALF_H = hex_dim.HALF_H;
@@ -128,15 +137,9 @@ public:
 		const float S;
 		const float H;
 
-		//const float offset_x;
-		//const float offset_y;
-
 		public:
-
 		constexpr mapPointToHexCoord(float Rad, float Sid, float Hei) : R(Rad), S(Sid), H(Hei) { }
 
-//		mapPointToHexCoord()
-//			: R(this->dim().R), S(dim().S), H(dim().H) { }
 
 		std::pair<int,int> operator()(hex_point_type p)
 		{
@@ -166,12 +169,57 @@ public:
 
 	public:
 	mapPointToHexCoord pointToHexMapper() { return mapPointToHexCoord{dim().R,dim().S,dim().H}; }
+	private:
+	mapPointToHexCoord m_PointToHexCoordinate;
 
+	public:
+	inline std::pair<int,int> toHex(hex_point_type p)
+	{
+		return m_PointToHexCoordinate(p);
+	}
+
+	private:
+
+	class mapHexToPixel
+	{
+		const int win_w;
+		const int win_h;
+		typedef bgm::d2::point_xy<int> pixel_point_type;
+		typedef bgm::ring<pixel_point_type> pixel_ring_type;
+
+		transformer_type< pixel_point_type > transformer;
+
+		Hexagrid<T> *p_grid;
+
+		public:
+		constexpr 
+		mapHexToPixel(Hexagrid<T> &grid, int width, int height)
+			: win_w(width), win_h(height), transformer(grid.getBB(),win_w,win_h), p_grid(&grid) { }
+
+		void operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func);
+	}; 
+
+	public:
+	mapHexToPixel hexRingToPixelMapper(int w, int h) { return mapHexToPixel(*this,w,h); }
 	
 
 
 };
 
+
+template<typename T>
+void Hexagrid<T>::mapHexToPixel::operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func)
+{
+	for(std::size_t i = 0; i < p_grid->n_rows;++i)
+	{
+		for(std::size_t j = 0;j < p_grid->n_cols;++j)
+		{
+			pixel_ring_type dest_hexcell_ring;
+			assert(boost::geometry::transform( (*p_grid)(i,j).getRing() ,dest_hexcell_ring, transformer));
+			do_func(dest_hexcell_ring);
+		}
+	}
+}
 
 
 

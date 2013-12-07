@@ -1,6 +1,5 @@
 #include <iostream>
 #include <SDL.h>
-#include "HexGrid.hpp"
 #include "MoteGraphicalObject.hpp"
 #include "MoteMovementManager.hpp"
 #include "Glyph.hpp"
@@ -12,6 +11,8 @@ MoteMovementManager * MoteMovementManager::p_sInstance = NULL;
 
 bool MoteMovementManager::init()
 {
+	std::list<GameObject *> init_motes{};
+	
 	return true;
 }
 

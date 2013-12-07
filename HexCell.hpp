@@ -1,17 +1,15 @@
 #ifndef __HexCell_hpp__
 #define __HexCell_hpp__
-#include <utility>
-#include <cstddef>
-
 namespace Wand
 {
 	using HexIndex = std::pair<uint8_t,uint8_t>;
-
-	enum HexDirection : uint8_t { NORTHWEST, NORTH, NORTHEAST, SOUTHEAST, SOUTH, SOUTHWEST };
-
-	struct HexCell
+	class HexCell
 	{
-		HexIndex index;
+		SDL_Renderer *m_rend;
+		SDL_Texture *m_texture;
+		public:
+		HexCell(SDL_Renderer *);
+		void draw(SDL_Rect const &dest) const;
 	};
 
 };

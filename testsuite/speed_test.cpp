@@ -14,6 +14,7 @@
 
 #include <cstdio>
 #include <climits>
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -150,49 +151,6 @@ void ClockEnd()
 
 }
 
-/*
-class mapPointToHexCoord
-{
-	const float R;
-	const float S;
-	const float H;
-
-	const float offset_x;
-	const float offset_y;
-
-	public:
-
-	mapPointToHexCoord(const wand::hex::Hexagrid<float>& hgrid)
-		: R(hgrid.dim().R), S(hgrid.dim().S), H(hgrid.dim().H), offset_x(hgrid.offset_x()), offset_y(hgrid.offset_y()) { }
-
-	std::pair<int,int> operator()(point_type p, std::ostream &os)
-	{
-		os << "Point: (" <<  bg::get<0>(p) << ',' << bg::get<1>(p);
-		float x = bg::get<0>(p),
-			   y = bg::get<1>(p);
-
-
-		int i_t = floorf(x / S);
-
-		float y_ts = y - (i_t%2)*(H/2.f);
-		int j_t = floorf(y_ts/H);
-
-
-		float x_t = x - i_t*S;
-		float y_t = y_ts - j_t*H;
-
-
-		int i = x_t > R*fabsf(0.5f - y_t/H) ? i_t : i_t - 1;
-		int j = x_t > R*fabsf(0.5f - y_t/H) ? j_t : j_t - i%2 + (y_t > H/2.f ? 1 : 0);
-		
-		os << " maps to hex (" << j << ',' << i << ") ";
-
-		return std::pair<int,int>(i,j);
-	}
-};
-*/
-
-
 
 class AccessExperiment
 {
@@ -232,13 +190,34 @@ class AccessExperiment
 			std::printf("%d / %d random points were contained in the hexagrid bbox\n", success, size);
 	}
 
+	void clock_hgrid_pointlookup_verify()
+	{
+		//auto toHex(hgrid.pointToHexMapper());
+
+		std::cout << "Timing point to hexagon-id _verify_: ";
+		ClockStart();
+		for(auto const &p : access_idx)
+		{
+			std::pair<int,int> hex_coord = hgrid.toHex(p);
+
+			int i_row = std::get<1>(hex_coord);
+			int i_col = std::get<0>(hex_coord);
+
+			int id = i_col * m_rows+ i_row;
+
+			if(  i_row >= 0 && i_row < m_rows 
+           && i_col >= 0 && i_col < m_cols )
+			{
+				 assert(bg::covered_by(p,hgrid(i_row,i_col).getRing()));
+			}
+	
+		}
+		ClockEnd();
+	}
+
 	void clock_hgrid_pointlookup()
 	{
-		std::vector<int> hist(m_rows*m_cols,0);
-
-		int bounds_failure = 0;
 		auto toHex(hgrid.pointToHexMapper());
-
 
 		std::cout << "Timing point to hexagon-id: ";
 		ClockStart();
@@ -251,35 +230,21 @@ class AccessExperiment
 
 			int id = i_col * m_rows+ i_row;
 
-			bool bounds_error = true;
-
 			if(  i_row >= 0 && i_row < m_rows 
            && i_col >= 0 && i_col < m_cols )
 			{
-
            bg::covered_by(p,hgrid(i_row,i_col).getRing());
-			  ++hist[id];
-			} else 
-				++bounds_failure;
+			}
 	
 		}
 
 		ClockEnd();
-
-		if( bounds_failure )
-			std::cout << "(error bounds " << bounds_failure << ") ";
-		std::cout << std::endl;
-
 
 	}
 
 
 	void clock_hgrid_pointlookup_naive()
 	{
-		std::vector<int> hist(m_rows*m_cols,0);
-
-		int failure = 0;
-
 		ClockStart();
 		for(auto const &p : access_idx)
 		{
@@ -289,14 +254,11 @@ class AccessExperiment
 				{
 					if(bg::covered_by(p,hgrid(i,j).getRing()))
 					{
-						std::size_t id = i*m_cols + j;
-						++hist[id];
+						std::size_t volatile id = i*m_cols + j;
 						goto success;
 					}
 				}
 			}
-
-			++failure;
 
 			success:
 				continue;
@@ -304,28 +266,7 @@ class AccessExperiment
 
 
 		std::cout << "Timing point to hexagon-id (naive): ";
-		std::cout << "(failed " << failure << "): ";
 		ClockEnd();
-
-		auto result = std::minmax_element(hist.begin(),hist.end());
-		std::vector<float> weighted_hist(hist.begin(),hist.end());
-
-		const int run_size = this->size;
-
-		std::for_each(weighted_hist.begin(),weighted_hist.end(),
-			[failure,run_size, result](float &f)
-		{
-			f /= *result.second;
-			f *= 10.0f + (40.0f * static_cast<float>(failure)/run_size);
-		});
-
-
-		for(std::size_t i = 0;i < weighted_hist.size();++i)
-		{
-			auto cnt = hist[i];
-			if(cnt)
-				std::printf("hex %-4ld %-4d: %s\n", i, cnt,std::string(weighted_hist[i],'*').c_str());
-		}
 	}
 
 
@@ -363,5 +304,6 @@ int main()
 	AccessExperiment ex(n_rows,n_cols,n_pts);
 	ex.clock_hgrid_bb_check();
 	ex.clock_hgrid_pointlookup();
-	ex.clock_hgrid_pointlookup_naive();
+	ex.clock_hgrid_pointlookup_verify();
+	//ex.clock_hgrid_pointlookup_naive();
 }

@@ -7,7 +7,9 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
+#include <boost/geometry/strategies/transform/map_transformer.hpp>
 
+#include <HexCell.hpp>
 #include <util/Hex.hpp>
 #include <Mote.hpp>
 #include <util/Demangler.hpp>
@@ -176,31 +178,33 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 				 << " height: " << win_h << std::endl;
 
 
-	trans::map_transformer<hex_point_type,pixel_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
+	//trans::map_transformer<hex_point_type,pixel_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
 
 	SDL_SetRenderDrawColor(rend,0,0,0,255);
 	SDL_RenderClear(rend);
 
+	HexCell tCell(rend);
 
-	SDL_Surface* pTempSurface = IMG_ReadXPMFromArray(XPMLoadFromStaticCharArray(HexCell_xpm));
-	Uint32 t_pixel = SDL_MapRGB(pTempSurface->format,0xff,0xff,0xff);
+	auto to_pixel = b.hexRingToPixelMapper(win_w,win_h);
+	auto render_func = [&tCell,rend](const pixel_ring_type &pixel_ring) 
+	{ 
+		SDL_BBox destCell;
+		bg::envelope(pixel_ring,destCell);
+		{
+			SDL_Rect destRect((SDL_Rect)destCell);
+			tCell.draw(destRect);
+		}
 
-	if(SDL_SetColorKey(pTempSurface,SDL_TRUE,t_pixel) < 0)
-	{
-		std::cout << "Couldn't set alpha pixel: " << SDL_GetError() << std::endl;
-		SDL_FreeSurface(pTempSurface);
-		return;
-	}
-	SDL_Texture* pTexture = SDL_CreateTextureFromSurface(rend, pTempSurface);
+		draw(rend,pixel_ring);
+	};
 
-	SDL_FreeSurface(pTempSurface);
+	to_pixel(render_func);
 
-
+/*
 	for(std::size_t i = 0; i < b_rows;++i)
 	{
 		for(std::size_t j = 0;j < b_cols;++j)
 		{
-			pixel_ring_type dest_hexcell_ring;
 			assert(bg::transform(b(i,j).getRing(),dest_hexcell_ring,map_hex_to_pixel));
 			draw(rend,dest_hexcell_ring);
 
@@ -214,7 +218,7 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 			}
 		}
 	}
-
+*/
 	SDL_RenderPresent(rend);
 	SDL_Delay(2000);
 

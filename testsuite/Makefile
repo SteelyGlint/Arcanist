@@ -9,7 +9,7 @@ LIBS=-lSDL2 -lSDL2_image
 
 
 test_display:
-	$(CC) $(CFLAGS) -o test_display test_main.cpp test_sdl_geo.cpp $(LIBS)
+	$(CC) $(CFLAGS) -o test_display test_main.cpp test_sdl_geo.cpp ../HexCell.cpp $(LIBS)
 
 test_performance:
 	$(CC) $(CFLAGS) -o test_performance speed_test.cpp $(LIBS)

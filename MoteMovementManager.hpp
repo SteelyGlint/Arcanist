@@ -2,11 +2,15 @@
 #define __MoteMovementManager_hpp__
 #include "HexCell.hpp"
 #include <vector>
+#include <list>
 
 namespace Wand
 {
 
 class GameObject;
+
+class MoteObject;
+
 
 class MoteMovementManager
 {
@@ -31,7 +35,7 @@ public:
 		return p_sInstance;
 	}
 private:
-	std::vector<GameObject *> m_gameObjects;
+	std::list<GameObject *> m_gameObjects;
 
 /* copy of Hex and HexGrid dim */
 	HexIndex hexgrid_dim;

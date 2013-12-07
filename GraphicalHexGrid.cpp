@@ -1,21 +1,25 @@
 #include <iostream>
 
-#include "SDL.h"
+#include <SDL.h>
+
+#include <util/SDL_BoostGeomPoint.hpp>
 #include "TextureManager.hpp"
 #include "Game.hpp"
-#include "HexGrid.hpp"
+#include "GraphicalHexGrid.hpp"
+
+namespace Wand {
 
 HexGrid* HexGrid::s_pInstance = 0;
 
-bool HexGrid::init(int w, int h)
+bool HexGrid::init(int w, int h,int rows, int cols)
 {
-	hex_width = 54;
-	hex_height = 45;
-
 	std::cerr << "Grid Dimensions: " << w << 'x' << h << std::endl;
-//	std::cerr << "Grid Texture: " << h_width << 'x' << h_height << std::endl;
-
 	m_dim = std::make_pair(w,h);
+
+	m_pHexGrid = std::unique_ptr<hexgrid_type>(new hexgrid_type(rows,cols));
+	
+	win_w = w;
+	win_h = h;
 
 	return true;
 }
@@ -45,18 +49,22 @@ HexIndex HexGrid::atPoint(int x, int y)
 
 void HexGrid::draw()
 {
-	const int W = hex_width;
-	const double R = W/2.000;
+	SDL_Renderer * const rend(Game::Instance()->getRenderer());
+	static HexCell tCell(rend);
 
-	const int S = (3.00*R)/2.00;
-	const int H = (sqrt(3)*R);
+	auto to_pixel = m_pHexGrid->hexRingToPixelMapper(win_w,win_h);
 
-	for(int i = 0;i < m_dim.first;++i)
-	{
-		for(int j = 0;j < m_dim.second;++j)
-		{
-			TextureManager::Instance()->draw("hexcell",i*S,j*H + (i%2)*(H/2.00),W,H,Game::Instance()->getRenderer());
-		}
-	}
+	auto render_func = [&tCell,rend](const pixel_ring_type &pixel_ring){ 
+		SDL_BBox destCell;
+		boost::geometry::envelope(pixel_ring,destCell);
+		SDL_Rect destRect((SDL_Rect)destCell);
+		tCell.draw(destRect);
+	};
 
+	to_pixel(render_func);
 }
+
+
+
+
+} /*namespace Wand */

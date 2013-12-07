@@ -21,7 +21,6 @@ struct Component
 	uint8_t quality;
 
 	uint32_t weight() { return 1; }
-
 	operator Element() const { return element; }
 };
 

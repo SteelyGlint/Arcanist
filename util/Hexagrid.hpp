@@ -36,8 +36,8 @@ public:
 	using hex_point_type = bgm::d2::point_xy<T>;
 	using box_type = bgm::box<hex_point_type>;
 
-	template<typename Point, bool SameScale = true>
-	using transformer_type = trans::map_transformer<hex_point_type, Point,true, SameScale>;
+	template<std::size_t dim = 2, bool SameScale = true>
+	using transformer_type = trans::map_transformer<int, dim,dim,true, SameScale>;
 
 
 private:
@@ -187,7 +187,7 @@ public:
 		typedef bgm::d2::point_xy<int> pixel_point_type;
 		typedef bgm::ring<pixel_point_type> pixel_ring_type;
 
-		transformer_type< pixel_point_type > transformer;
+		transformer_type<> transformer;
 
 		Hexagrid<T> *p_grid;
 

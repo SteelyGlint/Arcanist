@@ -49,10 +49,10 @@ int main()
 
 	assert(TheGame::Instance()->init("Particle Test"));
 		
-   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_ESCAPE,&quit_func);
-   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_SPACE,&pause_func);
-   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEUP,&playback_func);
-   TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEDOWN,&playback_func);
+   	TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_ESCAPE,&quit_func);
+	TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_SPACE,&pause_func);
+	TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEUP,&playback_func);
+	TheInputHandler::Instance()->addKeyChangedFunc(SDL_SCANCODE_PAGEDOWN,&playback_func);
 
 	while(Game::Instance()->running())
 	{

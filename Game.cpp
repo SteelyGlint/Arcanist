@@ -16,24 +16,25 @@ namespace Wand {
 Game * Game::s_pInstance = nullptr;
 
 
+#define SUBSYS(arg) if(!arg::Instance()->init()) \
+                    {\
+                        std::cerr << "Subsystem " << #arg << " failed to init.\n";\
+                        return false;\
+                    }
+
+
 bool Game::init(const std::string &title, int x, int y, int width, int height, Uint32 flags)
 {
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return false;
 
-	SDL_CreateWindowAndRenderer(0,0,flags,&win,&rend);
+	SDL_CreateWindowAndRenderer(width,height,flags,&win,&rend);
 
 	if( win == 0 )
 		return false;
 
-	rend = SDL_CreateRenderer(win, -1, 0);
-
 	if(rend == 0)
 		return false;
-
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
-	SDL_RenderSetLogicalSize(rend, width, height);
-
 
 	print_render_info(rend);
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
@@ -41,28 +42,14 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	int win_w, win_h;
 	SDL_GetWindowSize(win,&win_w,&win_h);
 
-	if(!TheTextureManager::Instance()->init())
-	{
-		return false;
-	}
-
-	if(!TheGlyphController::Instance()->init())
-	{
-		return false;
-	}
-
-	if(!TheMoteMovementManager::Instance()->init())
-	{
-		return false;
-	}
-
-	if(!TheInputHandler::Instance()->init())
-	{
-		return false;
-	}
+	SUBSYS(TheTextureManager)
+	SUBSYS(TheInputHandler)
+	SUBSYS(TheGlyphController)
+	SUBSYS(TheMoteMovementManager)
 
 	if(!TheHexGrid::Instance()->init(win_w,win_h,11,23))
 	{
+		std::cerr << "Subsystem HexGrid failed to init.\n";
 		return false;
 	}
 

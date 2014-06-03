@@ -62,10 +62,7 @@ namespace trans=boost::geometry::strategy::transform;
 template<typename Geometry>
 inline void draw(SDL_Renderer *rend, Geometry const & geometry);
 
-
-
 template<typename Tag> struct render_dispatch {};
-
 
 template<> struct render_dispatch<bg::point_tag>
 {
@@ -80,7 +77,6 @@ template<> struct render_dispatch<bg::point_tag>
 
 };
 	
-
 template<> struct render_dispatch<bg::segment_tag>
 {
 	template <typename Segment>
@@ -97,9 +93,6 @@ template<> struct render_dispatch<bg::segment_tag>
 
 	}
 };
-
-
-
 
 template<> struct render_dispatch<bg::ring_tag>
 {
@@ -160,12 +153,10 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 {
 	using bg::dsv;
 
-	constexpr std::size_t b_rows = 2;
-	constexpr std::size_t b_cols = 1;
+	constexpr std::size_t b_rows = 11;
+	constexpr std::size_t b_cols = 11;
 
 	wand::hex::Hexagrid<float> b(b_rows,b_cols);
-
-
 
 	bgm::box<hex_point_type> hexgrid_bbox;
 	bg::assign(hexgrid_bbox,b.getBB());
@@ -176,7 +167,6 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 	SDL_GetWindowSize(win,&win_w,&win_h);
 	std::cout << "Window width: " << win_w
 				 << " height: " << win_h << std::endl;
-
 
 	//trans::map_transformer<hex_point_type,pixel_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
 
@@ -194,8 +184,9 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 			SDL_Rect destRect((SDL_Rect)destCell);
 			tCell.draw(destRect);
 		}
+		std::cerr << "Render to box: " << bg::dsv(destCell) << std::endl;
 
-		draw(rend,pixel_ring);
+	//	draw(rend,pixel_ring);
 	};
 
 	to_pixel(render_func);

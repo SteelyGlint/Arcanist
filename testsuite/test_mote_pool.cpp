@@ -12,6 +12,9 @@
 
 #include <boost/geometry/io/dsv/write.hpp>
 
+#include <GraphicalHexGrid.hpp>
+#include <MoteMovementManager.hpp>
+
 #include <cassert>
 
 using namespace Wand;
@@ -59,7 +62,7 @@ void print_mote<Mote>(const Mote &m)
 	std::cout << "Mote (" << m.size << "): bf #"
 				 << m.elements
 				 << " @"
-				 << boost::geometry::dsv(m.position)
+	//			 << boost::geometry::dsv(m.position) //broken
 				 << std::endl;
 	
 	for(uint i = 0; i < m.size;++i)

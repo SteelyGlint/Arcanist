@@ -23,14 +23,14 @@ void MoteMovementManager::update()
 		obj->update();
 		MoteGraphicalObject *mObj;
 
-		if( (mObj = dynamic_cast<MoteGraphicalObject *>(obj)) != NULL)
+		/*if( (mObj = dynamic_cast<MoteGraphicalObject *>(obj)) != NULL)
 		{
 			if(mObj->x() < 0)
 				mObj->setBearing(Bearing::E);
 
 			else if(mObj->x()+9 >= 680)
 				mObj->setBearing(Bearing::W);
-		}
+		}*/
 	}
 }
 

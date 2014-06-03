@@ -9,6 +9,7 @@
 
 #include "MoteGraphicalObject.hpp"
 
+#include "MoteMovementManager.hpp"
 #include "GlyphController.hpp"
 
 namespace Wand {
@@ -28,10 +29,14 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return false;
 
-	SDL_CreateWindowAndRenderer(width,height,flags,&win,&rend);
+
+	win = SDL_CreateWindow("Arcanist", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		width, height, flags);
 
 	if( win == 0 )
 		return false;
+
+	rend = SDL_CreateRenderer(win, -1, 0);
 
 	if(rend == 0)
 		return false;
@@ -47,7 +52,7 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	SUBSYS(TheGlyphController)
 	SUBSYS(TheMoteMovementManager)
 
-	if(!TheHexGrid::Instance()->init(win_w,win_h,11,23))
+	if(!TheHexGrid::Instance()->init(win_w,win_h,11,11,rend))
 	{
 		std::cerr << "Subsystem HexGrid failed to init.\n";
 		return false;

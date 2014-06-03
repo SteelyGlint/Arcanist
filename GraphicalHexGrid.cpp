@@ -4,16 +4,27 @@
 
 #include <util/SDL_BoostGeomPoint.hpp>
 #include "TextureManager.hpp"
-#include "Game.hpp"
+#include "HexCell.hpp"
 #include "GraphicalHexGrid.hpp"
+
+namespace bg = boost::geometry;
+namespace bgm = boost::geometry::model;
 
 namespace Wand {
 
 HexGrid* HexGrid::s_pInstance = 0;
 
-bool HexGrid::init(int w, int h,int rows, int cols)
+typedef bgm::d2::point_xy<float> hex_point_type;
+typedef bgm::box<hex_point_type> hex_box_type;
+typedef bgm::ring<hex_point_type> hex_ring_type;
+
+
+bool HexGrid::init(int w, int h,int rows, int cols, SDL_Renderer *sdlrender)
 {
-	std::cerr << "Grid Dimensions: " << w << 'x' << h << std::endl;
+	std::cerr << "Window Dimensions: " << w << 'x' << h << std::endl;
+	std::cerr << "HexGrid Dimensions: " << cols << 'x' << rows << std::endl;
+
+	rend = sdlrender;
 	m_dim = std::make_pair(w,h);
 
 	m_pHexGrid = std::unique_ptr<hexgrid_type>(new hexgrid_type(rows,cols));
@@ -21,9 +32,15 @@ bool HexGrid::init(int w, int h,int rows, int cols)
 	win_w = w;
 	win_h = h;
 
+	bgm::box<hex_point_type> hexgrid_bbox;
+	//m_pHexGrid->getBB();
+	bg::assign(hexgrid_bbox, m_pHexGrid->getBB());
+
+	std::cerr << "hexgrid bb: " << bg::dsv(hexgrid_bbox) << std::endl;
+	
+
 	return true;
 }
-
 
 HexIndex HexGrid::atPoint(int x, int y)
 {
@@ -49,18 +66,22 @@ HexIndex HexGrid::atPoint(int x, int y)
 
 void HexGrid::draw()
 {
-	SDL_Renderer * const rend(Game::Instance()->getRenderer());
-	static HexCell tCell(rend);
-
+	static bool renderOnce = false;
+	HexCell tCell(rend);
 	auto to_pixel = m_pHexGrid->hexRingToPixelMapper(win_w,win_h);
 
-	auto render_func = [&tCell,rend](const pixel_ring_type &pixel_ring){ 
+	auto render_func = [&tCell](const pixel_ring_type &pixel_ring)
+	{ 
 		SDL_BBox destCell;
 		boost::geometry::envelope(pixel_ring,destCell);
 		SDL_Rect destRect((SDL_Rect)destCell);
 		tCell.draw(destRect);
+
+		if(!renderOnce)
+			std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
 	};
 
+	renderOnce = true;
 	to_pixel(render_func);
 }
 

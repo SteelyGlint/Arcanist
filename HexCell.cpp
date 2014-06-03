@@ -19,7 +19,7 @@ HexCell::HexCell(SDL_Renderer *rend)
 
 	if(!pTempSurface)
 	{
-		std::cout << "Couldn't load XPM: " << SDL_GetError() << std::endl;
+		std::cerr << "Couldn't load XPM: " << SDL_GetError() << std::endl;
 		return;
 	}
 
@@ -27,7 +27,7 @@ HexCell::HexCell(SDL_Renderer *rend)
 
 	if(SDL_SetColorKey(pTempSurface,SDL_TRUE,t_pixel) < 0)
 	{
-		std::cout << "Couldn't set alpha pixel: " << SDL_GetError() << std::endl;
+		std::cerr << "Couldn't set alpha pixel: " << SDL_GetError() << std::endl;
 		SDL_FreeSurface(pTempSurface);
 		return;
 	}

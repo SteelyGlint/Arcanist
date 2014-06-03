@@ -3,8 +3,8 @@
 #include <vector>
 #include <string>
 #include <SDL.h>
-#include "HexCell.hpp"
-#include "MoteMovementManager.hpp"
+//#include "HexCell.hpp"
+//#include "MoteMovementManager.hpp"
 
 
 namespace Wand
@@ -13,7 +13,8 @@ class Game
 {
 public:
 
-	bool init(const std::string &title, int x= SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, int width = 640, int height = 480, Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );//| SDL_WINDOW_FULLSCREEN_DESKTOP);
+	bool init(const std::string &title, int x= SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, int width = 640, int height = 480, Uint32 flags = SDL_WINDOW_SHOWN );
+
 	void draw();
 	void render();
 	void update();

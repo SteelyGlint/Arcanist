@@ -11,7 +11,7 @@ using std::string;
 #include "GlyphController.hpp"
 
 static bool no_updates = false;
-static int delay = 5;
+static int delay = 500;
 
 using namespace Wand;
 

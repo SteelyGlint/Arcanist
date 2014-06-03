@@ -143,10 +143,8 @@ public:
 
 		std::pair<int,int> operator()(hex_point_type p)
 		{
-			//os << "Point: (" <<  bg::get<0>(p) << ',' << bg::get<1>(p);
 			float x = bg::get<0>(p),
 					y = bg::get<1>(p);
-
 
 			int i_t = floorf(x / S);
 
@@ -161,8 +159,6 @@ public:
 			int i = x_t > R*fabsf(0.5f - y_t/H) ? i_t : i_t - 1;
 			int j = x_t > R*fabsf(0.5f - y_t/H) ? j_t : j_t - i%2 + (y_t > H/2.f ? 1 : 0);
 			
-			//os << " maps to hex (" << j << ',' << i << ") ";
-
 			return std::pair<int,int>(i,j);
 		}
 	};

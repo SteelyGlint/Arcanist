@@ -66,7 +66,6 @@ HexIndex HexGrid::atPoint(int x, int y)
 
 void HexGrid::draw()
 {
-	static bool renderOnce = false;
 	HexCell tCell(rend);
 	auto to_pixel = m_pHexGrid->hexRingToPixelMapper(win_w,win_h);
 
@@ -77,8 +76,7 @@ void HexGrid::draw()
 		SDL_Rect destRect((SDL_Rect)destCell);
 		tCell.draw(destRect);
 
-		if(!renderOnce)
-			std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
+		std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
 	};
 
 	renderOnce = true;

@@ -162,8 +162,8 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 {
 	using bg::dsv;
 
-	constexpr std::size_t b_rows = 2;
-	constexpr std::size_t b_cols = 1;
+	std::size_t b_rows = 2;
+	std::size_t b_cols = 1;
 
 	int win_w, win_h;
 	SDL_GetWindowSize(win,&win_w,&win_h);

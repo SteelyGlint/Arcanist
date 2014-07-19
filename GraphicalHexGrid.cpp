@@ -27,7 +27,7 @@ bool HexGrid::init(int w, int h,int rows, int cols, SDL_Renderer *sdlrender)
 	rend = sdlrender;
 	m_dim = std::make_pair(w,h);
 
-	m_pHexGrid = std::unique_ptr<hexgrid_type>(new hexgrid_type(rows,cols));
+	m_pHexGrid = new hexgrid_type(rows,cols);
 	
 	win_w = w;
 	win_h = h;

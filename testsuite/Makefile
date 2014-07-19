@@ -2,7 +2,7 @@ CC=clang++
 INCLUDES=-I/usr/include/SDL2 -I.. -I. -I../util/ -g
 #DFLAGS=-fprofile-arcs -ftest-coverage -g -pg -O0
 
-CFLAGS=-O2 $(INCLUDES) $(DFLAGS) -std=c++11 -Wall #-pedantic -Werror
+CFLAGS=-O2 $(INCLUDES) $(DFLAGS) -Wall #-pedantic -Werror -ferror-limit=2
 LIBS=-lSDL2 -lSDL2_image
 
 .PHONY:test_motes test_display test_performance test_mote_pool test_hex
@@ -18,7 +18,7 @@ test_display:
 test_performance:
 	$(CC) $(CFLAGS) -o test_performance speed_test.cpp $(LIBS)
 
-test_mote_pool:
+test_mote:
 	$(CC) $(CFLAGS) -o test_mote test_mote_pool.cpp
 
 test_hex:

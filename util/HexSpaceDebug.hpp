@@ -41,8 +41,7 @@ struct AssertVerifyHexRing
 
 		bgm::segment<typename bg::point_type<HexRing>::type> seg;
 
-		float s_len = bg::length(seg(hex_ring[0],hex_ring[1]));
-
+		//float s_len = bg::length(seg(hex_ring[0],hex_ring[1]));
 //		float s_len = bg::length(hex_side(hex_ring,static_cast<HexSide>(0)));
 //		for(int i = 0;i < 6;++i)
 //		{

@@ -1,7 +1,7 @@
 #ifndef __Hexagrid_hpp__
 #define __Hexagrid_hpp__
 
-#include <cstdint>
+#include <stdint.h>
 #include <cassert>
 #include <functional>
 #include <boost/geometry/geometries/point_xy.hpp>
@@ -33,12 +33,16 @@ struct Hexagrid
 	const std::size_t n_cols;
 
 public:
-	using hex_point_type = bgm::d2::point_xy<T>;
-	using box_type = bgm::box<hex_point_type>;
+	typedef  bgm::d2::point_xy<T> hex_point_type;
+	typedef bgm::box<hex_point_type> box_type;
+	//using hex_point_type = bgm::d2::point_xy<T>;
+	//using box_type = bgm::box<hex_point_type>;
 
+/*
 	template<std::size_t dim = 2, bool SameScale = true>
 	using transformer_type = trans::map_transformer<int, dim,dim,true, SameScale>;
-
+*/
+	typedef trans::map_transformer<int, 2, 2, true, true> transformer_type;
 
 private:
 	Hexagon<T> **p_grid;
@@ -48,24 +52,13 @@ private:
 	const float f_off_x;
 	const float f_off_y;
 public:
-	inline float offset_x() const { return f_off_x; }
-	inline float offset_y() const { return f_off_y; }
-
-	inline std::size_t rows() const 
-	{
-		return n_rows;
-	}
-
-	inline std::size_t cols() const 
-	{
-		return n_cols;
-	}
+	float offset_x() const { return f_off_x; }
+	float offset_y() const { return f_off_y; }
+	std::size_t rows() const { return n_rows; }
+	std::size_t cols() const { return n_cols; }
 	
-	inline
-	const THexPolygonGen<T> &dim() const
-	{
-		return hex_dim;
-	}
+	
+	const THexPolygonGen<T> &dim() const { return hex_dim; }
 
 	box_type getBB() const
 	{
@@ -80,8 +73,8 @@ public:
 	}
 
 
-	Hexagrid(std::size_t n_rows, std::size_t n_cols, THexPolygonGen<T> hgen = THexPolygonGen<T>{})
-		: n_rows(n_rows), n_cols(n_cols),m_bbox(bg::make_inverse< box_type >()),hex_dim(hgen), f_off_x(hex_dim.R), f_off_y(hex_dim.HALF_H), m_PointToHexCoordinate{hex_dim.R,hex_dim.S,hex_dim.H}
+	Hexagrid(std::size_t n_rows, std::size_t n_cols, THexPolygonGen<T> hgen = THexPolygonGen<T>())
+		: n_rows(n_rows), n_cols(n_cols),m_bbox(bg::make_inverse< box_type >()),hex_dim(hgen), f_off_x(hex_dim.R), f_off_y(hex_dim.HALF_H), m_PointToHexCoordinate(hex_dim.R,hex_dim.S,hex_dim.H)
 	{
 		const float R = hex_dim.R;
 		const float HALF_H = hex_dim.HALF_H;
@@ -119,18 +112,17 @@ public:
 				Hexagon<T> *h;
 				if( ( h = p_grid[j*n_rows + i]) != 0)
 				{
-					p_grid[i*n_cols + j] = nullptr;
+					p_grid[i*n_cols + j] = 0;
 					delete h;
 				}
 			}
 		}
 		
 		delete [] p_grid;
-		p_grid = nullptr;
+		p_grid = 0;
 	}
 
 
-	private:
 	class mapPointToHexCoord
 	{
 		const float R;
@@ -138,7 +130,7 @@ public:
 		const float H;
 
 		public:
-		constexpr mapPointToHexCoord(float Rad, float Sid, float Hei) : R(Rad), S(Sid), H(Hei) { }
+		mapPointToHexCoord(float Rad, float Sid, float Hei) : R(Rad), S(Sid), H(Hei) { }
 
 
 		std::pair<int,int> operator()(hex_point_type p)
@@ -164,7 +156,7 @@ public:
 	};
 
 	public:
-	mapPointToHexCoord pointToHexMapper() { return mapPointToHexCoord{dim().R,dim().S,dim().H}; }
+	mapPointToHexCoord pointToHexMapper() { return mapPointToHexCoord(dim().R,dim().S,dim().H); }
 	private:
 	mapPointToHexCoord m_PointToHexCoordinate;
 
@@ -174,7 +166,6 @@ public:
 		return m_PointToHexCoordinate(p);
 	}
 
-	private:
 
 	class mapHexToPixel
 	{
@@ -183,19 +174,19 @@ public:
 		typedef bgm::d2::point_xy<int> pixel_point_type;
 		typedef bgm::ring<pixel_point_type> pixel_ring_type;
 
-		transformer_type<> transformer;
+		transformer_type transformer;
 
 		Hexagrid<T> *p_grid;
 
 		public:
-		constexpr 
+		
 		mapHexToPixel(Hexagrid<T> &grid, int width, int height)
 			: win_w(width), win_h(height), transformer(grid.getBB(),win_w,win_h), p_grid(&grid) { }
 
-		void operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func);
+		void operator()( void(*do_func)(const bgm::ring< bgm::d2::point_xy<int> >&));
+		//void operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func);
 	}; 
 
-	public:
 	mapHexToPixel hexRingToPixelMapper(int w, int h) { return mapHexToPixel(*this,w,h); }
 	
 
@@ -204,7 +195,7 @@ public:
 
 
 template<typename T>
-void Hexagrid<T>::mapHexToPixel::operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func)
+void Hexagrid<T>::mapHexToPixel::operator()( void(*do_func)(const bgm::ring< bgm::d2::point_xy<int> >&))
 {
 	for(std::size_t i = 0; i < p_grid->n_rows;++i)
 	{
@@ -216,7 +207,6 @@ void Hexagrid<T>::mapHexToPixel::operator()( std::function< void(const bgm::ring
 		}
 	}
 }
-
 
 
 } }

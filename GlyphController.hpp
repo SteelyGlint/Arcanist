@@ -31,8 +31,6 @@ class GlyphController
 
 
 	private:
-	GlyphController() = default;
-	~GlyphController() = default;
 	static GlyphController *s_pInstance;
 	
 };

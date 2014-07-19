@@ -4,9 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-#include <tuple>
 
-#include <type_traits>
 
 #include <cmath>
 
@@ -14,6 +12,7 @@
 #include <boost/geometry/geometries/ring.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/segment.hpp>
+#include <boost/geometry/algorithms/assign.hpp>
 
 #include "HexDim.hpp"
 
@@ -23,17 +22,8 @@ namespace bgm=boost::geometry::model;
 
 namespace wand {
 namespace hex {
-namespace space {
-
-constexpr float SQRT_3 = ::wand::hex::detail::SQRT_3;
-constexpr float FLT_PREC = ::wand::hex::detail::FLT_PREC;
-
-//constexpr HexagonDim hex(27.f);
-
-
-}
-
 namespace detail {
+
 
 
 /*
@@ -43,22 +33,28 @@ swapping the input coordinates (i.e. "mirror" them around the diagonal): x<->y o
 applying the formulas as described above;
 swapping the output coordinates back ("unmirroring" them): i<->j, x<->y.
 */
-	template<typename T, typename Point = bgm::d2::point_xy<T> >
+	template<typename T, typename Point>
 	static inline std::vector<Point> fill_points_flat(T _x, T _y, T HALF_H, T R)
 	{
-		std::vector<Point> pts{ 
-			{_x - R    , _y}, 
-			{_x - R/2.f, _y + HALF_H },
-			{_x + R/2.f, _y + HALF_H },
-			{_x + R    , _y},
-			{_x + R/2.f, _y - HALF_H },
-			{_x - R/2.f, _y - HALF_H },
-			{_x - R    , _y}
-		};
+		//bg::assign_value(points[0], $`typename detail::param<Point>::type value`)
 
+		Point points[7];
+
+
+		bg::assign_values(points[0],_x - R    , _y);
+		bg::assign_values(points[1],_x - R/2.f, _y + HALF_H );
+		bg::assign_values(points[2],_x + R/2.f, _y + HALF_H );
+		bg::assign_values(points[3],_x + R    , _y);
+		bg::assign_values(points[4],_x + R/2.f, _y - HALF_H );
+		bg::assign_values(points[5],_x - R/2.f, _y - HALF_H );
+		bg::assign_values(points[6],_x - R    , _y);
+
+		std::vector<Point> pts(points,points+sizeof(points) / sizeof(Point) );
 		return pts;
 	}
 
+
+/*
 	template<typename T, typename Point = bgm::d2::point_xy<T> >
 	static inline std::vector<Point> fill_points_pointy(T _x, T _y, T HALF_H, T R)
 	{
@@ -76,6 +72,7 @@ swapping the output coordinates back ("unmirroring" them): i<->j, x<->y.
 		return pts;
 	}
 
+*/
 
 } /* namespace detail */
 
@@ -138,17 +135,19 @@ struct THexPolygonGen
 
 public:
 
-	constexpr THexPolygonGen(dim_type hex = dim_type{27.0f})
+	THexPolygonGen(dim_type hex = dim_type(27.0f))
 	: R(hex.Radius()), W(hex.Width()), HALF_H(hex.HalfHeight()), H(hex.Height()), S(hex.Side()) { }
 
-	constexpr inline float round_two(float f)
+	inline float round_two(float f)
 	{
-		return std::floor(0.5f + (f / space::FLT_PREC)) * space::FLT_PREC;
+		return std::floor(0.5f + (f / detail::FLT_PREC)) * detail::FLT_PREC;
 	}
 
 public:
-	using point_type = bgm::d2::point_xy<T>;
-	using ring_type = bgm::ring<point_type>;
+	typedef bgm::d2::point_xy<T> point_type;
+	//using point_type = bgm::d2::point_xy<T>;
+	typedef bgm::ring<point_type> ring_type;
+	//using ring_type = bgm::ring<point_type>;
 
 	template<typename Point>
 	inline ring_type operator()(const Point& p)
@@ -156,10 +155,9 @@ public:
 
 	inline ring_type operator()(T x,T y)
 	{
-		std::vector<point_type> pts{
-			detail::fill_points_flat(x,y, HALF_H, R)
-		};
-		ring_type hex_ring(std::begin(pts),std::end(pts)); // order of points matters.. must be clockwise.
+		std::vector<point_type> pts = 
+			detail::fill_points_flat<T,point_type>(x,y, HALF_H, R);
+		ring_type hex_ring(pts.begin(),pts.end()); // order of points matters.. must be clockwise.
 		return hex_ring;
 	}
 

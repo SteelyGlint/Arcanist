@@ -2,7 +2,7 @@
 #define __HexCell_hpp__
 namespace Wand
 {
-	using HexIndex = std::pair<uint8_t,uint8_t>;
+	typedef std::pair<uint8_t,uint8_t> HexIndex;
 	class HexCell
 	{
 		SDL_Renderer *m_rend;

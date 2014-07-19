@@ -8,8 +8,8 @@
 #include <iomanip>
 #include <stdexcept>
 #include <utility>                                                    
-#include <tuple>
 
+#include <boost/tuple/tuple.hpp>
 #include <boost/geometry/io/dsv/write.hpp>
 
 #include <GraphicalHexGrid.hpp>
@@ -23,17 +23,17 @@ const char *print_element(Element e)
 {
 	switch(e)
 	{
-		case Element::Void:
+		case Void:
 			return "Void";
-		case Element::Chaos:
+		case Chaos:
 			return "Chaos";
-		case Element::Fire:
+		case Fire:
 			return "Fire";
-		case Element::Spark:
+		case Spark:
 			return "Spark";
-		case Element::Life:
+		case Life:
 			return "Life";
-		case Element::Flow:
+		case Flow:
 			return "Flow";
 	}
 
@@ -77,8 +77,8 @@ int main()
 {
 	Mote m;
 	print_mote(m);
-	Component c1{Element::Fire,4};
+	Component c1(Fire,4);
 	m.add(c1);
-	m.add(Component{Element::Spark,1});
+	m.add(Component(Spark,1));
 	print_mote(m);
 }

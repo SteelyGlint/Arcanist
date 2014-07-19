@@ -134,8 +134,11 @@ void list_coordinates(Point const& p)
 template<typename HexRing>
 void print_ring_info(HexRing& r)
 {
-	using ring_type = typename bg::ring_type<HexRing>::type;
-	using point_type = typename bg::point_type<ring_type>::type;
+	typedef typename bg::ring_type<HexRing>::type ring_type;
+	typedef typename bg::point_type<ring_type>::type point_type;
+
+//	using ring_type = typename bg::ring_type<HexRing>::type;
+//	using point_type = typename bg::point_type<ring_type>::type;
 
 
 	//std::cout << "Size: " << r.size() << std::endl;
@@ -249,8 +252,8 @@ int main()
 
 	HexPolygonGen h_build;
 
-	constexpr float x = 0.0f;
-	constexpr float y = 0.0f;
+	float x = 0.0f;
+	float y = 0.0f;
 
 	HexCoordinate first{{x,y}};
 
@@ -304,7 +307,7 @@ int main()
 	Compute unit vector for direction. 
 	it is assigned to SouthEast, @ hex_1_0
 */
-	const float dir_v_len{sqrt(W*W+H*H)};
+	const float dir_v_len = sqrt(W*W+H*H);
 
 	bool exit_now = false;
 	for(int i = 0; i < 10;++i)

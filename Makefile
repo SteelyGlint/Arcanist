@@ -1,6 +1,6 @@
 CC=clang++
 INCLUDES=-I/usr/include/SDL2 -I. -Iutil/ -I/usr/local/
-CFLAGS=-O0 -c -g $(INCLUDES) -std=c++11 -Wall #-pedantic -Werror
+CFLAGS=-O0 -c -g $(INCLUDES) -Wall #-pedantic -Werror
 LDFLAGS=`sdl2-config --libs` -lSDL2_image
 
 

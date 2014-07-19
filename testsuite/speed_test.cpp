@@ -18,29 +18,34 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
-#include <forward_list>
-#include <chrono>
-#include <utility>
-
 #include <vector>
 #include <time.h>
+#include <cstdlib>
 
-#include <random>
 #include <map>
 
+#include <utility>
+#ifdef __linux__
+#include <sys/time.h>
+#else
+#include <time.h>
+#endif
+
+#include <boost/tuple/tuple.hpp>
 #include <boost/geometry/geometry.hpp>
+
 
 #include <util/Hex.hpp>
 
 using std::cout;
 using std::endl;
-using std::forward_list;
 
 using std::vector;
 using std::map;
 
 using std::make_pair;
 using std::pair;
+using std::rand;
 
 void ClockStart();
 void ClockEnd();
@@ -50,17 +55,29 @@ typedef HexRingGen::point_type point_type;
 
 namespace bg=boost::geometry;
 
+static float randflt(int LO, int HI)
+{
+	return LO + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(HI-LO)));
+}	
+
+
+
 vector<point_type> CreateCommonAccessPattern(int size,float w = 10,float h = 10)
 {
 	ClockStart();
 	vector<point_type> idx_vec(size);
 	
-	std::random_device rd;
-	std::uniform_real_distribution<float> uniform_dist_w(0,w);
-	std::uniform_real_distribution<float> uniform_dist_h(0,h);
+//	std::random_device rd;
+//	std::uniform_real_distribution<float> uniform_dist_w(0,w);
+//	std::uniform_real_distribution<float> uniform_dist_h(0,h);
 
 	for(int i(0);i < size;++i)
-		bg::assign_values(idx_vec[i],uniform_dist_w(rd),uniform_dist_h(rd));
+	{
+		float rand_w = randflt(0,w);
+		float rand_h = randflt(0,h);
+
+		bg::assign_values(idx_vec[i],rand_w,rand_h);
+	}
 
 	std::cout << "Initialize " << size << " random points from (0 - " << w << ",0 - " << h << "): ";
 	ClockEnd();
@@ -86,21 +103,21 @@ vector<point_type> CreateCommonAccessPattern(int size,wand::hex::Hexagrid<float>
 	ClockStart();
 	vector<point_type> idx_vec(size);
 
-	auto h_bb = hgrid.getBB();
+	wand::hex::Hexagrid<float>::box_type h_bb = hgrid.getBB();
 
-	auto min_w = bg::get<bg::min_corner,0>(h_bb);
-	auto max_w = bg::get<bg::max_corner,0>(h_bb);
+	float min_w = bg::get<bg::min_corner,0>(h_bb);
+	float max_w = bg::get<bg::max_corner,0>(h_bb);
 
-	auto min_h = bg::get<bg::min_corner,1>(h_bb);
-	auto max_h = bg::get<bg::max_corner,1>(h_bb);
+	float min_h = bg::get<bg::min_corner,1>(h_bb);
+	float max_h = bg::get<bg::max_corner,1>(h_bb);
 	
-	
-	std::random_device rd;
-	std::uniform_real_distribution<float> uniform_dist_w(min_w,max_w);
-	std::uniform_real_distribution<float> uniform_dist_h(min_h,max_h);
 
 	for(int i(0);i < size;++i)
-		bg::assign_values(idx_vec[i],uniform_dist_w(rd),uniform_dist_h(rd));
+	{
+		float rnd_w = randflt(min_w,max_w);
+		float rnd_h = randflt(min_h,max_h);
+		bg::assign_values(idx_vec[i],rnd_w,rnd_h);
+	}
 
 
 
@@ -116,39 +133,24 @@ vector<point_type> CreateCommonAccessPattern(int size,wand::hex::Hexagrid<float>
 }
 
 
-typedef std::chrono::high_resolution_clock my_clock;
-my_clock::time_point t;
-my_clock::time_point t_end;
+//typedef std::chrono::high_resolution_clock my_clock;
+//my_clock::time_point t;
+//my_clock::time_point t_end;
+
+struct timeval t;
+struct timeval t_end;
 
 void ClockStart()
 {	
-	t = my_clock::now();
+	gettimeofday(&t,NULL);
 }
 void ClockEnd()
 { 
-	using namespace std::chrono;
-	t_end = my_clock::now();
+	gettimeofday(&t_end,NULL);
+	struct timeval result;
+	timersub(&t_end,&t,&result);
 
-
-	seconds s_duration = duration_cast<seconds>(t_end - t);
-	milliseconds ms_duration = duration_cast<milliseconds>(t_end - t);
-	microseconds us_duration = duration_cast<microseconds>(t_end - t);
-	nanoseconds ns_duration = duration_cast<nanoseconds>(t_end - t);
-
-	if(s_duration.count() >= 50)
-	{
-		cout << s_duration.count() << " s\n";
-	}
-	else if(ms_duration.count() >= 50)
-	{
-		cout << ms_duration.count() << " ms\n";
-	} else if( us_duration.count() >= 50) {
-		cout << us_duration.count() << " us\n";
-	} else {
-		cout << ns_duration.count() << " ns\n";
-	}
-
-
+	cout << result.tv_sec << " s" << result.tv_usec << " ms\n";
 }
 
 
@@ -174,14 +176,16 @@ class AccessExperiment
 
 	void clock_hgrid_bb_check()
 	{
-		auto hbbox = hgrid.getBB();
+
+		wand::hex::Hexagrid<float>::box_type hbbox = hgrid.getBB();
 		std::cout << "Timing bounding box covered_by: ";
 
 		int success = 0;
 		ClockStart();
-		for(auto const &p : access_idx)
+		
+		for(vector<point_type>::iterator it = access_idx.begin(); it != access_idx.end();++it)
 		{
-			if(bg::covered_by(p,hbbox))
+			if(bg::covered_by((*it),hbbox))
 				++success;
 		}
 		ClockEnd();
@@ -196,19 +200,18 @@ class AccessExperiment
 
 		std::cout << "Timing point to hexagon-id _verify_: ";
 		ClockStart();
-		for(auto const &p : access_idx)
+		for(vector<point_type>::iterator it = access_idx.begin(); it != access_idx.end();++it)
 		{
-			std::pair<int,int> hex_coord = hgrid.toHex(p);
 
-			int i_row = std::get<1>(hex_coord);
-			int i_col = std::get<0>(hex_coord);
+			std::pair<int,int> hex_coord = hgrid.toHex(*it);
 
+			int i_row = hex_coord.second;
+			int i_col = hex_coord.first;
 			int id = i_col * m_rows+ i_row;
 
-			if(  i_row >= 0 && i_row < m_rows 
-           && i_col >= 0 && i_col < m_cols )
+			if(  i_row >= 0 && i_row < m_rows && i_col >= 0 && i_col < m_cols )
 			{
-				 assert(bg::covered_by(p,hgrid(i_row,i_col).getRing()));
+				 assert(bg::covered_by(*it,hgrid(i_row,i_col).getRing()));
 			}
 	
 		}
@@ -217,23 +220,22 @@ class AccessExperiment
 
 	void clock_hgrid_pointlookup()
 	{
-		auto toHex(hgrid.pointToHexMapper());
+		wand::hex::Hexagrid<float>::mapPointToHexCoord toHex(hgrid.pointToHexMapper());
 
 		std::cout << "Timing point to hexagon-id: ";
 		ClockStart();
-		for(auto const &p : access_idx)
+		for(vector<point_type>::iterator it = access_idx.begin(); it != access_idx.end();++it)
 		{
-			std::pair<int,int> hex_coord = toHex(p);
+			std::pair<int,int> hex_coord = toHex(*it);
 
-			int i_row = std::get<1>(hex_coord);
-			int i_col = std::get<0>(hex_coord);
+			int i_row = hex_coord.second;
+			int i_col = hex_coord.first;
 
 			int id = i_col * m_rows+ i_row;
 
-			if(  i_row >= 0 && i_row < m_rows 
-           && i_col >= 0 && i_col < m_cols )
+			if(  i_row >= 0 && i_row < m_rows && i_col >= 0 && i_col < m_cols )
 			{
-           bg::covered_by(p,hgrid(i_row,i_col).getRing());
+				bg::covered_by(*it,hgrid(i_row,i_col).getRing());
 			}
 	
 		}
@@ -246,13 +248,13 @@ class AccessExperiment
 	void clock_hgrid_pointlookup_naive()
 	{
 		ClockStart();
-		for(auto const &p : access_idx)
+		for(vector<point_type>::iterator it = access_idx.begin(); it != access_idx.end();++it)
 		{
 			for(std::size_t i = 0; i < m_rows;++i)
 			{
 				for(std::size_t j = 0; j < m_cols;++j)
 				{
-					if(bg::covered_by(p,hgrid(i,j).getRing()))
+					if(bg::covered_by((*it),hgrid(i,j).getRing()))
 					{
 						std::size_t volatile id = i*m_cols + j;
 						goto success;

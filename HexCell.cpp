@@ -13,9 +13,9 @@ namespace Wand
 {
 
 HexCell::HexCell(SDL_Renderer *rend)
-	: m_rend(rend), m_texture(nullptr)
+	: m_rend(rend), m_texture(0)
 {
-	SDL_Surface* pTempSurface = IMG_ReadXPMFromArray(XPMLoadFromStaticCharArray(HexCell_xpm));
+	SDL_Surface* pTempSurface = IMG_ReadXPMFromArray((char **)&HexCell_xpm);
 
 	if(!pTempSurface)
 	{

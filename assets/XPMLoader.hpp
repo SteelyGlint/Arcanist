@@ -1,5 +1,6 @@
 #ifndef __XPMLoader_hpp__
 #define __XPMLoader_hpp__
+#if 0
 #include <type_traits>
 
 using std::add_pointer;
@@ -59,4 +60,5 @@ char **XPMLoadFromStaticCharArray(T xpm)
 }
 
 };
+#endif
 #endif

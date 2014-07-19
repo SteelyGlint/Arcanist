@@ -1,8 +1,13 @@
 
 #ifndef __Demangler_hpp__
 #define __Demangler_hpp__
+
+
 #include <typeinfo>
 #include <iostream>
+
+#ifdef __GNUC__
+
 #include <cxxabi.h>
 
 
@@ -16,5 +21,7 @@ std::ostream& operator<<(std::ostream& stream, const std::type_info& ti) {
                                    &status);
   return stream << res;
 }
+
+#endif
 
 #endif

@@ -41,7 +41,6 @@ private:
 	HexIndex hexgrid_dim;
 	HexIndex hex_dim;
 
-	MoteMovementManager() = default;
 	static MoteMovementManager* p_sInstance;
 };
 

@@ -42,11 +42,10 @@ private:
 	SDL_Window* win;
 	SDL_Renderer* rend;
 	
-	bool m_bRunning = true;
-
-	Game() = default;
-	~Game() = default;
+	bool m_bRunning;
 	static Game* s_pInstance;
+
+	Game() : win(NULL), rend(NULL), m_bRunning(true) {}
 
 };
 typedef Game TheGame;

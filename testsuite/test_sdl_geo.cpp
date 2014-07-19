@@ -12,10 +12,9 @@
 #include <HexCell.hpp>
 #include <util/Hex.hpp>
 #include <Mote.hpp>
-#include <util/Demangler.hpp>
 
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 
 #include <assets/XPMLoader.hpp>
@@ -109,7 +108,10 @@ template<> struct render_dispatch<bg::ring_tag>
 		SDL_SetRenderDrawColor(rend,255,128,255,255);
 		for(std::size_t i = 0;i < n_points-1;++i)
 		{
-			draw(rend,segment_type(r[i],r[i+1]));
+			segment_type seg;
+			bg::assign_point(seg.first,r[i]);
+			bg::assign_point(seg.second,r[i+1]);
+			draw(rend,seg);
 		}
 
 
@@ -118,7 +120,13 @@ template<> struct render_dispatch<bg::ring_tag>
 		SDL_SetRenderDrawColor(rend,34,34,34,255);
 
 		for(std::size_t i = 0;i < n_points-1;++i)
-		draw(rend,segment_type(r[i],center_pt));
+		{
+			segment_type seg;
+			bg::assign_point(seg.first,r[i]);
+			bg::assign_point(seg.second,center_pt);
+
+			draw(rend,seg);
+		}
 		//draw(rend,segment_type(r[2],center_pt));
 		//draw(rend,segment_type(r[4],center_pt));
 	}
@@ -144,8 +152,26 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry)
 	>::apply(rend,geometry);
 }
 
+static SDL_Renderer* rend = 0;
+
+void setRenderer(SDL_Renderer* r)
+{
+	rend = r;
+}
 
 
+void test_draw(const pixel_ring_type &pixel_ring)
+{
+	HexCell tCell(rend);
+
+	SDL_BBox destCell;
+	bg::envelope(pixel_ring,destCell);
+	{
+		SDL_Rect destRect((SDL_Rect)destCell);
+		tCell.draw(destRect);
+	}
+	std::cerr << "Render to box: " << bg::dsv(destCell) << std::endl;
+}
 
 
 
@@ -153,8 +179,8 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 {
 	using bg::dsv;
 
-	constexpr std::size_t b_rows = 11;
-	constexpr std::size_t b_cols = 11;
+	std::size_t b_rows = 11;
+	std::size_t b_cols = 11;
 
 	wand::hex::Hexagrid<float> b(b_rows,b_cols);
 
@@ -166,36 +192,28 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 	int win_w, win_h;
 	SDL_GetWindowSize(win,&win_w,&win_h);
 	std::cout << "Window width: " << win_w
-				 << " height: " << win_h << std::endl;
+		  << " height: " << win_h << std::endl;
 
-	//trans::map_transformer<hex_point_type,pixel_point_type,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
 
 	SDL_SetRenderDrawColor(rend,0,0,0,255);
 	SDL_RenderClear(rend);
 
-	HexCell tCell(rend);
+	setRenderer(rend);
 
-	auto to_pixel = b.hexRingToPixelMapper(win_w,win_h);
-	auto render_func = [&tCell,rend](const pixel_ring_type &pixel_ring) 
-	{ 
-		SDL_BBox destCell;
-		bg::envelope(pixel_ring,destCell);
-		{
-			SDL_Rect destRect((SDL_Rect)destCell);
-			tCell.draw(destRect);
-		}
-		std::cerr << "Render to box: " << bg::dsv(destCell) << std::endl;
+	SDL_Surface* pSurface = IMG_ReadXPMFromArray((char **)&HexCell_xpm);
+	SDL_Texture* pTexture = SDL_CreateTextureFromSurface(rend,pSurface);
 
-	//	draw(rend,pixel_ring);
-	};
+//	wand::hex::Hexagrid<float>::mapHexToPixel to_pixel = b.hexRingToPixelMapper(win_w,win_h);
+//	to_pixel(&test_draw);
 
-	to_pixel(render_func);
 
-/*
+	trans::map_transformer<int,2,2,true,true> map_hex_to_pixel(hexgrid_bbox,win_w,win_h);
+
 	for(std::size_t i = 0; i < b_rows;++i)
 	{
 		for(std::size_t j = 0;j < b_cols;++j)
 		{
+			hex_ring_type dest_hexcell_ring;
 			assert(bg::transform(b(i,j).getRing(),dest_hexcell_ring,map_hex_to_pixel));
 			draw(rend,dest_hexcell_ring);
 
@@ -209,10 +227,11 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 			}
 		}
 	}
-*/
 	SDL_RenderPresent(rend);
 	SDL_Delay(2000);
 
+
+	SDL_DestroyTexture(pTexture);
 }
 
 

@@ -1,22 +1,24 @@
 #ifndef __Mote_hpp__
 #define __Mote_hpp__
-#include <cstdint>
+#include <stdint.h>
 #include <utility>
-#include <array>
 #include <bitset>
 #include <string>
 
+#include <boost/array.hpp>
 #include "util/HexDim.hpp"
 
 namespace Wand 
 {
-constexpr std::size_t NUM_COMPONENTS_PER_MOTE = 4;
-constexpr std::size_t NUM_ELEMENTS = 6;
+static const int NUM_COMPONENTS_PER_MOTE = 4;
+static const int NUM_ELEMENTS = 6;
 
-enum class Element : uint8_t { Void, Chaos, Fire, Spark, Life, Flow };
+enum Element { Void, Chaos, Fire, Spark, Life, Flow };
 
 struct Component
 {
+	Component(Element e = Void, uint8_t n = 0) : element(e), quality(n) {}
+
 	Element element;
 	uint8_t quality;
 
@@ -26,28 +28,29 @@ struct Component
 
 struct Mote
 {
-	std::size_t size = 0;
-	std::array<Component,NUM_COMPONENTS_PER_MOTE> components;
+	typedef boost::array<Component, NUM_COMPONENTS_PER_MOTE> array_component;
+	std::size_t size;
+	array_component components;
 	std::bitset<NUM_ELEMENTS> elements;
 
 	typedef std::pair<int,int> point_type;
 	point_type position;
 
 	template<typename Comp>
-	bool add(Comp&& c);
+	bool add(const Comp& c);
 
 	uint32_t weight();
 
 };
 
 template<typename Comp>
-bool Mote::add(Comp&& c)
+bool Mote::add(const Comp& c)
 {
 	if(size == NUM_COMPONENTS_PER_MOTE)
 		return false;
 
-	components[size++] = std::forward<Comp>(c);
-	elements[static_cast<uint8_t>((Element)c)] = true;
+	components[size++] = c;
+	elements[c] = true;
 	return true;
 }
 

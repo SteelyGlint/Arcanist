@@ -41,9 +41,12 @@ West  \       /     South
 template<typename T>
 struct Hexagon
 {
-	using point_type = bgm::d2::point_xy<T>;
-	using ring_type = bgm::ring<point_type>;
-	using box_type = bgm::box<point_type>;
+	typedef bgm::d2::point_xy<T> point_type;
+	//using point_type = bgm::d2::point_xy<T>;
+	typedef bgm::ring<point_type> ring_type;
+	//using ring_type = bgm::ring<point_type>;
+	typedef bgm::box<point_type> box_type;
+	//using box_type = bgm::box<point_type>;
 
 	Hexagon(T x, T y, THexPolygonGen<T> hgen);
 	
@@ -64,7 +67,7 @@ struct Hexagon
 
 template<typename T>
 inline Hexagon<T>::Hexagon(T x, T y, THexPolygonGen<T> hgen)
-	: hex_center{x,y},
+	: hex_center(x,y),
 	  hex_ring(hgen(x,y)) {}
 
 

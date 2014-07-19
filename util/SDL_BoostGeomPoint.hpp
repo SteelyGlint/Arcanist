@@ -12,32 +12,39 @@ BOOST_GEOMETRY_REGISTER_POINT_2D(SDL_Point, int, cs::cartesian, x, y)
 
 struct SDL_BBox
 {
+	SDL_BBox() { ll.x = ll.y = ur.x = ur.y = 0; }
 	SDL_Point ll;
 	SDL_Point ur;
 
 	operator SDL_Rect();
 	SDL_BBox(SDL_Rect const& rhs);
 
-	SDL_BBox() = default;
 };
 
 BOOST_GEOMETRY_REGISTER_BOX(SDL_BBox, SDL_Point, ll, ur);
 
 inline SDL_BBox::operator SDL_Rect()
 {
-	int x{bg::get<bg::min_corner,0>(*this)};
-	int y{bg::get<bg::min_corner,1>(*this)};
+	int x(bg::get<bg::min_corner,0>(*this));
+	int y(bg::get<bg::min_corner,1>(*this));
 
-	SDL_Rect ret{x,y,
-		bg::get<bg::max_corner,0>(*this) - x,
-		bg::get<bg::max_corner,1>(*this) - y};
+	SDL_Rect ret;
+	ret.x = x;
+	ret.y = y;
+	ret.w = bg::get<bg::max_corner,0>(*this) - x;
+	ret.y = bg::get<bg::max_corner,1>(*this) - y;
 
 	return ret;
 }
 
 
-inline SDL_BBox::SDL_BBox(SDL_Rect const& rhs)
-: ll{rhs.x,rhs.y}, ur{rhs.x+rhs.w,rhs.y+rhs.h} { }
+SDL_BBox::SDL_BBox(SDL_Rect const& rhs)
+{
+	ll.x = rhs.x;
+	ll.y = rhs.y;
+	ur.x = rhs.x + rhs.w;
+	ur.y = rhs.y + rhs.h;
+}
 	
 	
 

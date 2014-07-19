@@ -1,6 +1,5 @@
 #ifndef __GraphicalHexGrid_hpp__
 #define __GraphicalHexGrid_hpp__
-#include <utility>
 #include <SDL.h>
 #include <util/Hex.hpp>
 #include <boost/geometry/geometries/register/point.hpp>
@@ -23,7 +22,8 @@ typedef bgm::ring<pixel_point_type> pixel_ring_type;
 
 class HexGrid
 {
-	using hexgrid_type = wand::hex::Hexagrid<float>;
+	//using hexgrid_type = wand::hex::Hexagrid<float>;
+	typedef wand::hex::Hexagrid<float> hexgrid_type;
 public:
 	bool init(int w, int h,int rows, int cols, SDL_Renderer *sdlrender);
 	void draw();
@@ -39,8 +39,8 @@ public:
 	}
 	
 private:
-	std::unique_ptr<hexgrid_type> m_pHexGrid;
-	uint hex_width = 0, hex_height = 0;
+	hexgrid_type* m_pHexGrid;
+	uint hex_width, hex_height;
 	int win_w, win_h;
 	HexIndex m_dim;
 
@@ -50,9 +50,6 @@ public:
 	uint get_hex_height() { return hex_height; }
 
 private:
-	HexGrid() = default;
-	~HexGrid() = default;
-
 	SDL_Renderer *rend;
 	static HexGrid * s_pInstance;
 };

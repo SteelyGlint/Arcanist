@@ -23,16 +23,6 @@ namespace bgm=boost::geometry::model;
 
 namespace wand {
 namespace hex {
-namespace space {
-
-float SQRT_3 = ::wand::hex::detail::SQRT_3;
-float FLT_PREC = ::wand::hex::detail::FLT_PREC;
-
-//constexpr HexagonDim hex(27.f);
-
-
-}
-
 namespace detail {
 
 
@@ -138,12 +128,12 @@ struct THexPolygonGen
 
 public:
 
-	constexpr THexPolygonGen(dim_type hex = dim_type{27.0f})
+	THexPolygonGen(dim_type hex = dim_type{27.0f})
 	: R(hex.Radius()), W(hex.Width()), HALF_H(hex.HalfHeight()), H(hex.Height()), S(hex.Side()) { }
 
-	constexpr inline float round_two(float f)
+	inline float round_two(float f)
 	{
-		return std::floor(0.5f + (f / space::FLT_PREC)) * space::FLT_PREC;
+		return std::floor(0.5f + (f / detail::FLT_PREC)) * detail::FLT_PREC;
 	}
 
 public:

@@ -5,7 +5,7 @@
 #include "util/Hex.hpp"
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
-#include "HexCell.hpp""
+#include "HexCell.hpp"
 
 namespace bg=boost::geometry;
 namespace bgm=boost::geometry::model;

@@ -47,19 +47,26 @@ namespace Wand
 	class MouseInput
 	{
 		public:
-		std::vector<bool> m_mouseButtonStates{false,false,false};
+		std::vector<bool> m_mouseButtonStates;
 
-		std::vector<std::pair<int,int> > m_mouseButtonPos
-		{/* Button Down */
-			std::pair<int,int>{-1,-1}, /* LEFT */
-			std::pair<int,int>{-1,-1}, /* MIDDLE */
-			std::pair<int,int>{-1,-1},  /* RIGHT */
-			/* Button Up */
-			std::pair<int,int>{-1,-1}, /* LEFT */
-			std::pair<int,int>{-1,-1}, /* MIDDLE */
-			std::pair<int,int>{-1,-1},  /* RIGHT */
+		std::vector<std::pair<int, int> > m_mouseButtonPos;
 
-		};
+		MouseInput()
+		{
+			m_mouseButtonStates = { false, false, false };
+
+			m_mouseButtonPos =
+			{/* Button Down */
+				std::pair<int, int>{-1, -1}, /* LEFT */
+				std::pair<int, int>{-1, -1}, /* MIDDLE */
+				std::pair<int, int>{-1, -1},  /* RIGHT */
+				/* Button Up */
+				std::pair<int, int>{-1, -1}, /* LEFT */
+				std::pair<int, int>{-1, -1}, /* MIDDLE */
+				std::pair<int, int>{-1, -1},  /* RIGHT */
+
+			};
+		}
 
 		template<int BUTTON, int DEPRESSED_STATE>
 		std::pair<int,int> const & getMousePosition() const 

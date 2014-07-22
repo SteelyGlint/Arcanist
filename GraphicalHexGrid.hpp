@@ -2,10 +2,10 @@
 #define __GraphicalHexGrid_hpp__
 #include <utility>
 #include <SDL.h>
-#include <util/Hex.hpp>
+#include "util/Hex.hpp"
 #include <boost/geometry/geometries/register/point.hpp>
 #include <boost/geometry/geometries/register/box.hpp>
-#include <HexCell.hpp>
+#include "HexCell.hpp""
 
 namespace bg=boost::geometry;
 namespace bgm=boost::geometry::model;
@@ -40,14 +40,14 @@ public:
 	
 private:
 	std::unique_ptr<hexgrid_type> m_pHexGrid;
-	uint hex_width = 0, hex_height = 0;
+	unsigned int hex_width = 0, hex_height = 0;
 	int win_w, win_h;
 	HexIndex m_dim;
 
 public:
 	HexIndex const & dim() const { return m_dim; }
-	uint get_hex_width() { return hex_width; }
-	uint get_hex_height() { return hex_height; }
+	unsigned int get_hex_width() { return hex_width; }
+	unsigned int get_hex_height() { return hex_height; }
 
 private:
 	HexGrid() = default;

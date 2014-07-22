@@ -17,7 +17,7 @@ public:
 	}
 
 private:
-	uint m_arrival_tick; //= std::integral_max_int;
+	unsigned int m_arrival_tick; //= std::integral_max_int;
 
 	//GlyphBase *m_src = nullptr;
 	//GlyphBase *m_dest = nullptr;

@@ -37,7 +37,10 @@ inline SDL_BBox::operator SDL_Rect()
 
 
 inline SDL_BBox::SDL_BBox(SDL_Rect const& rhs)
-: ll{rhs.x,rhs.y}, ur{rhs.x+rhs.w,rhs.y+rhs.h} { }
+{
+	ll = { rhs.x, rhs.y };
+	ur = { rhs.x + rhs.w, rhs.y + rhs.h };
+}
 	
 	
 

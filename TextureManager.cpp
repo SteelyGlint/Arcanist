@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "TextureManager.hpp"
-#include "DebugRender.hpp"
+#include "util/DebugRender.hpp"
 
 #include "Game.hpp"
 
@@ -16,9 +16,9 @@ TextureManager* TextureManager::s_pInstance = 0;
 
 bool TextureManager::init()
 {
-	load(XPMLoadFromStaticCharArray(Glyph_xpm),"glyph",TheGame::Instance()->getRenderer());
-	load(XPMLoadFromStaticCharArray(Particles_xpm),"greyscale", TheGame::Instance()->getRenderer());
-	load(XPMLoadFromStaticCharArray(HexCell_xpm),"hexcell",TheGame::Instance()->getRenderer());
+	load((char **)&Glyph_xpm, "glyph", TheGame::Instance()->getRenderer());
+	load((char **)&Particles_xpm, "greyscale", TheGame::Instance()->getRenderer());
+	load((char **)&HexCell_xpm, "hexcell", TheGame::Instance()->getRenderer());
 
 	return true;
 }

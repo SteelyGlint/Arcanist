@@ -16,68 +16,66 @@ namespace hex {
 
 namespace detail {
 
-constexpr float rnd(float x);
-constexpr bool same(float lhs, float rhs);
+float rnd(float x);
+bool same(float lhs, float rhs);
 
-
-
-static constexpr float FLT_PREC = 0.0001f;
-static constexpr float SQRT_3 = 1.732051f;
+static float FLT_PREC = 0.0001f;
+static float SQRT_3 = 1.732051f;
 
 }
 
 
 class HexagonDim
 {
-	const float m_Radius;
-	const float m_Width;
-	const float m_Height;
-	const float m_Side;
+	float m_Radius;
+	float m_Width;
+	float m_Height;
+	float m_Side;
 
 protected:
-	static constexpr float FLT_PREC = detail::FLT_PREC;
-	static constexpr float SQRT_3 = detail::SQRT_3;
+	static float FLT_PREC;
+	static float SQRT_3;
 
 public:
+	HexagonDim(const float &r);
 
-	constexpr HexagonDim(const float &r) :
-		 m_Radius(detail::rnd(r)), 
-		 m_Width(detail::rnd(r*2.f)), 
-		 m_Height(detail::rnd(HexagonDim::SQRT_3*r)), 
-		 m_Side(detail::rnd((r*3.f)/2.f))
-	{
-
-	}
-
-	constexpr float HalfHeight() const { return detail::rnd(m_Height/2.f); }
-	constexpr float Radius() const { return m_Radius; }
-	constexpr float Width() const { return m_Width; }
-	constexpr float Height() const { return m_Height; }
-	constexpr float Side() const { return m_Side; }
+	float HalfHeight() const { return detail::rnd(m_Height/2.f); }
+	float Radius() const { return m_Radius; }
+	float Width() const { return m_Width; }
+	float Height() const { return m_Height; }
+	float Side() const { return m_Side; }
 
 
-	friend inline constexpr float detail::rnd(float x);
-	friend inline constexpr bool detail::same(float lhs, float rhs);
+	friend inline float detail::rnd(float x);
+	friend inline bool detail::same(float lhs, float rhs);
 };
 
-
+inline HexagonDim::HexagonDim(const float &r)
+{
+	FLT_PREC = detail::FLT_PREC;
+	SQRT_3 = detail::SQRT_3;
+	m_Radius = detail::rnd(r);
+	m_Width = detail::rnd(r*2.f);
+	m_Height = detail::rnd(HexagonDim::SQRT_3*r);
+	m_Side = detail::rnd((r*3.f) / 2.f);
+}
 
 
 namespace detail {
-inline constexpr float rnd(float x)
+inline float rnd(float x)
 {
 	return std::floor(0.5f + (x/HexagonDim::FLT_PREC))*HexagonDim::FLT_PREC;
 }
 
 
-inline constexpr bool same(float lhs, float rhs)
+inline bool same(float lhs, float rhs)
 {
 	return std::fabs(lhs) < std::fabs(rhs) ?
 		(std::fabs(rhs) - std::fabs(lhs)) < HexagonDim::FLT_PREC :
 		(std::fabs(lhs) - std::fabs(rhs)) < HexagonDim::FLT_PREC;
 }
 
-inline constexpr float abs_f(float x)
+inline float abs_f(float x)
 {
 	return { x < 0.f ? -x : x};
 }

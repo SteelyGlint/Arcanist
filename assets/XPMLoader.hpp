@@ -13,7 +13,7 @@ using std::is_pointer;
 
 namespace Wand
 {
-
+	/*
 template<typename T>
 char **XPMLoadFromStaticCharArray(T xpm)
 {
@@ -56,7 +56,7 @@ char **XPMLoadFromStaticCharArray(T xpm)
          >::type
       >(xpm);
 
-}
+}*/
 
 };
 #endif

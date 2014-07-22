@@ -4,7 +4,7 @@
 #include "InputHandler.hpp"
 #include "TextureManager.hpp"
 #include "GraphicalHexGrid.hpp"
-#include "DebugRender.hpp"
+#include "util/DebugRender.hpp"
 
 
 #include "MoteGraphicalObject.hpp"

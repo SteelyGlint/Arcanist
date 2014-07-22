@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-#include <util/SDL_BoostGeomPoint.hpp>
+#include "util/SDL_BoostGeomPoint.hpp"
 #include "TextureManager.hpp"
 #include "HexCell.hpp"
 #include "GraphicalHexGrid.hpp"
@@ -79,7 +79,7 @@ void HexGrid::draw()
 		std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
 	};
 
-	renderOnce = true;
+	//renderOnce = true;
 	to_pixel(render_func);
 }
 

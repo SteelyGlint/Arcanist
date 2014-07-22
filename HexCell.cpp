@@ -6,7 +6,7 @@
 #include <SDL_image.h>
 
 #include "assets/XPMLoader.hpp"
-#include <assets/HexCellBorder.xpm>
+#include "assets/HexCellBorder.xpm"
 #include "HexCell.hpp"
 
 namespace Wand
@@ -15,7 +15,7 @@ namespace Wand
 HexCell::HexCell(SDL_Renderer *rend)
 	: m_rend(rend), m_texture(nullptr)
 {
-	SDL_Surface* pTempSurface = IMG_ReadXPMFromArray(XPMLoadFromStaticCharArray(HexCell_xpm));
+	SDL_Surface* pTempSurface = IMG_ReadXPMFromArray((char **)&HexCell_xpm);
 
 	if(!pTempSurface)
 	{

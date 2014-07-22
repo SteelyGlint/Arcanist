@@ -116,7 +116,7 @@ void print_render_info(T* renderer)
 	cout << "\nMaximum texture width " << r_info.max_texture_width << " maximum texture height " << r_info.max_texture_height << std::endl;
 
 	cout << "Render Formats:\n" << std::dec;
-	uint i;
+	unsigned int i;
 	for(i = 0;i < r_info.num_texture_formats;++i)
 	{
 		cout << i << ": " << SDL_GetPixelFormatName(r_info.texture_formats[i]) << std::endl;

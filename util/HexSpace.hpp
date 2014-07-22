@@ -25,8 +25,8 @@ namespace wand {
 namespace hex {
 namespace space {
 
-constexpr float SQRT_3 = ::wand::hex::detail::SQRT_3;
-constexpr float FLT_PREC = ::wand::hex::detail::FLT_PREC;
+float SQRT_3 = ::wand::hex::detail::SQRT_3;
+float FLT_PREC = ::wand::hex::detail::FLT_PREC;
 
 //constexpr HexagonDim hex(27.f);
 

@@ -24,7 +24,7 @@ void print_info(T val)
 	cout << "Value " << typeid(T).name() << " = " << val << endl;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	Vector2D<int> d{1,1};
 	int i_val = 3;

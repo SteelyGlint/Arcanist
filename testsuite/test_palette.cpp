@@ -29,7 +29,7 @@ void screen_color_test(SDL_Renderer *rend)
 
 extern void test_main(SDL_Window *, SDL_Renderer *);
 
-int main()
+int main(int argc, char *argv[])
 {
 	SDL_Window *win;
 	SDL_Renderer *rend;

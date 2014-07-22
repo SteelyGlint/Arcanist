@@ -143,7 +143,7 @@ void print_ring_info(LineSeg &r)
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	typedef boost::geometry::model::d2::point_xy<float> point_type;
 	typedef boost::geometry::model::segment<point_type> lineseg_type;

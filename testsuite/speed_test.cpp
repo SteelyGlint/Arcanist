@@ -290,7 +290,7 @@ void read_env(const char* pChar, std::size_t& value)
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	std::size_t n_rows = 4;
 	std::size_t n_cols = 2;

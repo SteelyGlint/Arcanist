@@ -40,7 +40,7 @@ struct print_segment
 };
 
 
-int main()
+int main(int argc, char *argv[])
 {
     // Bring "+=" for a vector into scope
     using namespace boost::assign;

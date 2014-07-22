@@ -73,7 +73,7 @@ void print_mote<Mote>(const Mote &m)
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	Mote m;
 	print_mote(m);

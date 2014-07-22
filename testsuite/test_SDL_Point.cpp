@@ -26,7 +26,7 @@ struct constPoint
 };
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	static constexpr SDL_Point a_pts[] = {{0,0},{1,1}};
 	static constexpr constPoint constArray(a_pts);

@@ -242,7 +242,7 @@ http://stackoverflow.com/questions/9251537/how-to-create-a-boost-range-that-hide
 
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	typedef bgm::d2::point_xy<float> point;
 	typedef bgm::ring<point> ring_type;

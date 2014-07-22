@@ -23,7 +23,6 @@ namespace bgm=boost::geometry::model;
 
 
 using namespace wand::hex;
-using wand::hex::detail::HexagonDim;
 
 
 
@@ -31,7 +30,7 @@ using wand::hex::detail::HexagonDim;
 void print_info(const HexagonDim &h)
 {
 	std::cout.setf( std::ios::fixed, std:: ios::floatfield );
-	std::cout << "ISQRT: " << HexagonDim::SQRT_3 << std::endl
+	std::cout << "ISQRT: " << detail::SQRT_3 << std::endl
 				 << "R:  " << h.Radius() << std::endl
 	          << "W:  " << h.Width() << std::endl
 	          << "HH: " << h.HalfHeight() << std::endl
@@ -39,11 +38,11 @@ void print_info(const HexagonDim &h)
 	          << "S:  " << h.Side() << std::endl;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	constexpr HexagonDim hex(27.f);
 
-	static_assert(std::isnormal(HexagonDim::SQRT_3),"height is not normal");
+	static_assert(std::isnormal(detail::SQRT_3),"height is not normal");
 
 	static_assert(std::isnormal(hex.Height()),"height is not normal");
 	static_assert(std::isnormal(hex.Radius()),"radius is not normal");

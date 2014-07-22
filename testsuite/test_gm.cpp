@@ -21,7 +21,7 @@ BOOST_GEOMETRY_REGISTER_POINT_2D(my_point, double, cs::cartesian, x, y)
 // Register the box type, also notifying that it is based on "my_point"
 BOOST_GEOMETRY_REGISTER_BOX(my_box, my_point, ll, ur)
 
-int main()
+int main(int argc, char *argv[])
 {
     my_box b = boost::geometry::make<my_box>(100, 10, 1, 0);
     std::cout << "Area: "  << boost::geometry::area(b) << std::endl;

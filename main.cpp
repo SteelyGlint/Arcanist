@@ -43,7 +43,7 @@ void quit_func(SDL_Scancode key, bool pressed)
 	Game::Instance()->quit();
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	const string win_title{"Particle Test"};
 

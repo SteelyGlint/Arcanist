@@ -26,4 +26,4 @@ test_hex:
 
 
 clean:
-	rm -rf test_performance
+	rm -rf test_motes test_display test_performance test_mote test_hex

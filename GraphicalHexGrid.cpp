@@ -76,7 +76,7 @@ void HexGrid::draw()
 		SDL_Rect destRect((SDL_Rect)destCell);
 		tCell.draw(destRect);
 
-		std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
+		//std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
 	};
 
 	//renderOnce = true;

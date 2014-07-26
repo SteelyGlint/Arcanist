@@ -37,7 +37,7 @@ public:
 	using box_type = bgm::box<hex_point_type>;
 
 	template<std::size_t dim = 2, bool SameScale = true>
-	using transformer_type = trans::map_transformer<int, dim,dim,true, SameScale>;
+	using transformer_type = trans::map_transformer<double, dim,dim,true, SameScale>;
 
 
 private:

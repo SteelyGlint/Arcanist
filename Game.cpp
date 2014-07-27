@@ -29,8 +29,7 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
 		return false;
 
-
-	win = SDL_CreateWindow("Arcanist", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+	win = SDL_CreateWindow(title.c_str(), x, y,
 		width, height, flags);
 
 	if( win == 0 )
@@ -41,7 +40,7 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	if(rend == 0)
 		return false;
 
-	print_render_info(rend);
+//	print_render_info(rend);
 	SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
 
 	int win_w, win_h;
@@ -52,7 +51,7 @@ bool Game::init(const std::string &title, int x, int y, int width, int height, U
 	SUBSYS(TheGlyphController)
 	SUBSYS(TheMoteMovementManager)
 
-	if(!TheHexGrid::Instance()->init(win_w,win_h,11,11,rend))
+	if(!TheHexGrid::Instance()->init(win_w,win_h,25,25,rend))
 	{
 		std::cerr << "Subsystem HexGrid failed to init.\n";
 		return false;
@@ -104,7 +103,6 @@ void Game::update()
 
 	}
 */
-
 	
 }
 

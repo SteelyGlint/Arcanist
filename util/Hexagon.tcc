@@ -81,13 +81,13 @@ inline T Hexagon<T>::getY() const
 }
 
 template<typename T>
-inline typename Hexagon<T>::ring_type const & Hexagon<T>::getRing() const 
+typename Hexagon<T>::ring_type const & Hexagon<T>::getRing() const 
 { 
 	return hex_ring;
 }
 
 template<typename T>
-inline typename Hexagon<T>::box_type Hexagon<T>::getBB() const
+typename Hexagon<T>::box_type Hexagon<T>::getBB() const
 { 
 	box_type bb;
 	bg::envelope(hex_ring,bb);

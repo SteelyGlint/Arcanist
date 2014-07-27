@@ -3,8 +3,6 @@
 #include <vector>
 #include <string>
 #include <SDL.h>
-//#include "HexCell.hpp"
-//#include "MoteMovementManager.hpp"
 
 
 namespace Wand

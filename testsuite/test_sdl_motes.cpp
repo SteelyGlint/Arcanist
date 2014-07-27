@@ -18,11 +18,13 @@
 #include <SDL_image.h>
 #include <GraphicalHexGrid.hpp>
 #include <MoteMovementManager.hpp>
-
-
+#include <TextureManager.hpp>
 
 #include <assets/XPMLoader.hpp>
 #include <assets/HexCellBorder.xpm>
+
+
+using namespace Wand;
 
 namespace bg=boost::geometry;
 namespace bgm=boost::geometry::model;
@@ -158,21 +160,30 @@ inline void draw(SDL_Renderer *rend, Geometry const & geometry)
 
 
 
+
 void test_main(SDL_Window *win, SDL_Renderer *rend)
 {
 	using bg::dsv;
 
 	constexpr std::size_t b_rows = 2;
 	constexpr std::size_t b_cols = 1;
+	SDL_SetRenderDrawColor(rend,0,0,0,255);
 
 	int win_w, win_h;
 	SDL_GetWindowSize(win,&win_w,&win_h);
 
 	assert(TheHexGrid::Instance()->init(win_w,win_h,b_rows,b_cols,rend));
+	assert(TheTextureManager::Instance()->init());
 
-	TheHexGrid::Instance()->draw();
+	for(std::size_t i = 0; i < 100;++i)
+	{
+		SDL_RenderClear(rend);
+		TheHexGrid::Instance()->draw();
 
-	SDL_Delay(2000);
+		TheTextureManager::Instance()->draw("greyscale",9,0,9,9,rend);
+		SDL_RenderPresent(rend);
+		SDL_Delay(200);
+	}
 
 
 

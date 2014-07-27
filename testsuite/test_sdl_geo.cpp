@@ -175,7 +175,7 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 
 	HexCell tCell(rend);
 
-	auto to_pixel = b.hexRingToPixelMapper(win_w,win_h);
+	wand::hex::Hexagrid<float>::mapHexToPixel to_pixel = b.hexRingToPixelMapper(win_w,win_h);
 	auto render_func = [&tCell,rend](const pixel_ring_type &pixel_ring) 
 	{ 
 		SDL_BBox destCell;
@@ -186,7 +186,7 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 		}
 		std::cerr << "Render to box: " << bg::dsv(destCell) << std::endl;
 
-	//	draw(rend,pixel_ring);
+		draw(rend,pixel_ring);
 	};
 
 	to_pixel(render_func);
@@ -211,7 +211,7 @@ void test_main(SDL_Window *win, SDL_Renderer *rend)
 	}
 */
 	SDL_RenderPresent(rend);
-	SDL_Delay(2000);
+	SDL_Delay(200000);
 
 }
 

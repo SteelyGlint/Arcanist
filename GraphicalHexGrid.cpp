@@ -1,10 +1,22 @@
 #include <iostream>
 
-#include <SDL.h>
-
 #include "util/SDL_BoostGeomPoint.hpp"
-#include "TextureManager.hpp"
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/register/point.hpp>
+#include <boost/geometry/geometries/register/box.hpp>
+#include <boost/geometry/strategies/transform/map_transformer.hpp>
+
 #include "HexCell.hpp"
+#include "util/Hex.hpp"
+
+
+#include <SDL_image.h>
+#include "assets/XPMLoader.hpp"
+#include "assets/HexCellBorder.xpm"
+
+
+#include "TextureManager.hpp"
 #include "GraphicalHexGrid.hpp"
 
 namespace bg = boost::geometry;
@@ -28,6 +40,7 @@ bool HexGrid::init(int w, int h,int rows, int cols, SDL_Renderer *sdlrender)
 	m_dim = std::make_pair(w,h);
 
 	m_pHexGrid = std::unique_ptr<hexgrid_type>(new hexgrid_type(rows,cols));
+	m_pHexCell = std::unique_ptr<HexCell>(new HexCell(sdlrender));
 	
 	win_w = w;
 	win_h = h;
@@ -67,20 +80,23 @@ HexIndex HexGrid::atPoint(int x, int y)
 
 void HexGrid::draw()
 {
-	HexCell tCell(rend);
+	HexCell *tCell = m_pHexCell.get();
 	auto to_pixel = m_pHexGrid->hexRingToPixelMapper(win_w,win_h);
+
+	unsigned int b_rows = m_pHexGrid->rows();
+	unsigned int b_cols = m_pHexGrid->cols();
 
 	auto render_func = [&tCell](const pixel_ring_type &pixel_ring)
 	{ 
+		//std::cerr << "pixel_ring: " << bg::dsv(pixel_ring) << std::endl;
 		SDL_BBox destCell;
-		boost::geometry::envelope(pixel_ring,destCell);
-		SDL_Rect destRect((SDL_Rect)destCell);
-		tCell.draw(destRect);
-
-		//std::cerr << "Render to box: " << boost::geometry::dsv(destCell) << std::endl;
+		bg::envelope(pixel_ring,destCell);
+		{
+			SDL_Rect destRect((SDL_Rect)destCell);
+			tCell->draw(destRect);
+		}
 	};
 
-	//renderOnce = true;
 	to_pixel(render_func);
 }
 

@@ -23,7 +23,10 @@ int main(int argc, char *argv[])
 	rend = SDL_CreateRenderer(win, -1, 0);
 
 	if(rend == 0)
+	{
+		std::cerr << "Failed to create render context:" << SDL_GetError();
 		return 0;
+	}
 
 	test_main(win,rend);
 	SDL_Quit();

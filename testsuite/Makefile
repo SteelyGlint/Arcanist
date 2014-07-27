@@ -10,7 +10,7 @@ LIBS=-lSDL2 -lSDL2_image
 all:test_motes test_display test_performance test_mote_pool test_hex
 
 test_motes:
-	$(CC) $(CFLAGS) -o test_motes test_main.cpp test_sdl_motes.cpp ../MoteMovementManager.o ../GraphicalHexGrid.o ../HexCell.o $(LIBS)
+	$(CC) $(CFLAGS) -o test_motes test_main.cpp test_sdl_motes.cpp ../MoteMovementManager.o ../GraphicalHexGrid.o ../HexCell.o ../TextureManager.o $(LIBS)
 
 test_display:
 	$(CC) $(CFLAGS) -o test_display test_main.cpp test_sdl_geo.cpp ../HexCell.cpp $(LIBS)

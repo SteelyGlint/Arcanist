@@ -24,6 +24,7 @@ namespace trans=boost::geometry::strategy::transform;
 namespace wand {
 namespace hex {
 
+	using HexIndex = std::pair<uint8_t,uint8_t>;
 
 template<typename T>
 struct Hexagrid
@@ -37,7 +38,7 @@ public:
 	using box_type = bgm::box<hex_point_type>;
 
 	template<std::size_t dim = 2, bool SameScale = true>
-	using transformer_type = trans::map_transformer<int, dim,dim,true, SameScale>;
+	using transformer_type = trans::map_transformer<double, dim,dim,true, SameScale>;
 
 
 private:
@@ -175,7 +176,6 @@ public:
 	}
 
 	private:
-
 	class mapHexToPixel
 	{
 		const int win_w;
@@ -185,12 +185,12 @@ public:
 
 		transformer_type<> transformer;
 
-		Hexagrid<T> *p_grid;
+		const Hexagrid<T> &p_grid;
 
 		public:
 		constexpr 
-		mapHexToPixel(Hexagrid<T> &grid, int width, int height)
-			: win_w(width), win_h(height), transformer(grid.getBB(),win_w,win_h), p_grid(&grid) { }
+		mapHexToPixel(const Hexagrid<T> &grid, int width, int height)
+			: win_w(width), win_h(height), transformer(grid.getBB(),win_w,win_h), p_grid(grid) { }
 
 		void operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func);
 	}; 
@@ -206,12 +206,12 @@ public:
 template<typename T>
 void Hexagrid<T>::mapHexToPixel::operator()( std::function< void(const bgm::ring< bgm::d2::point_xy<int> >&)> do_func)
 {
-	for(std::size_t i = 0; i < p_grid->n_rows;++i)
+	for(std::size_t i = 0; i < p_grid.n_rows;++i)
 	{
-		for(std::size_t j = 0;j < p_grid->n_cols;++j)
+		for(std::size_t j = 0;j < p_grid.n_cols;++j)
 		{
 			pixel_ring_type dest_hexcell_ring;
-			assert(boost::geometry::transform( (*p_grid)(i,j).getRing() ,dest_hexcell_ring, transformer));
+			assert(boost::geometry::transform( p_grid(i,j).getRing() ,dest_hexcell_ring, transformer));
 			do_func(dest_hexcell_ring);
 		}
 	}

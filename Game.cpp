@@ -80,6 +80,11 @@ void Game::update()
 	TheMoteMovementManager::Instance()->update();
 	TheGlyphController::Instance()->update();
 
+	std::pair<int, int> mouse_pos = TheInputHandler::Instance()->getMousePosition();
+	std::cout << mouse_pos.first << ", " << mouse_pos.second << std::endl;
+
+	TheHexGrid::Instance()->hilite_hex_at_coords(mouse_pos);
+
 
 /*
 	static bool prior_state = TheInputHandler::Instance()->getMouseButtonState(LEFT);

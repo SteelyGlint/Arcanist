@@ -13,7 +13,7 @@ class Game
 {
 public:
 
-	bool init(const std::string &title, int x= SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, int width = 640, int height = 480, Uint32 flags = SDL_WINDOW_SHOWN );
+	bool init(const std::string &title, int x= SDL_WINDOWPOS_UNDEFINED, int y = SDL_WINDOWPOS_UNDEFINED, int width = 1280, int height = 960, Uint32 flags = SDL_WINDOW_SHOWN );
 
 	void draw();
 	void render();

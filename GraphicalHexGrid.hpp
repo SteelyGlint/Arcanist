@@ -44,10 +44,14 @@ private:
 	int win_w, win_h;
 	HexIndex m_dim;
 
+	HexIndex m_hilited;
+
 public:
 	HexIndex const & dim() const { return m_dim; }
 	unsigned int get_hex_width() { return hex_width; }
 	unsigned int get_hex_height() { return hex_height; }
+
+	void hilite_hex_at_coords(std::pair<int, int> pt);
 
 private:
 	HexGrid() = default;

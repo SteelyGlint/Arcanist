@@ -25,6 +25,9 @@ void InputHandler::update()
 			case 0x300:
 				if(event.type == SDL_KEYDOWN)
 				{
+					if (event.key.keysym.sym == SDLK_ESCAPE)
+						TheGame::Instance()->quit();
+
 					m_keyHandler.onKeyDown(event.key.keysym.scancode);
 					break;
 				}

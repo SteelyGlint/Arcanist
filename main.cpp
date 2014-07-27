@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 		if(!no_updates)
 			Game::Instance()->update();
 		Game::Instance()->render();
-		SDL_Delay(delay);
+		//SDL_Delay(delay);
 	}
 
 	Game::Instance()->clean();

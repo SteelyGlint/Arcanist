@@ -38,16 +38,17 @@ bool HexGrid::init(int w, int h,int rows, int cols, SDL_Renderer *sdlrender)
 
 	std::cerr << "hexgrid bb: " << bg::dsv(hexgrid_bbox) << std::endl;
 	
+	m_hilited = HexIndex(0, 0);
 
 	return true;
 }
 
 HexIndex HexGrid::atPoint(int x, int y)
 {
-	const int W = hex_width;
-	const float R = W/2.000;
-	const int S = (3.00*R)/2.00;
-	const int H = (sqrt(3)*R);
+	const double W = hex_width;
+	const double R = W / 2.000;
+	const double S = (3.00*R) / 2.00;
+	const double H = (sqrt(3)*R);
 
 	int i_t = floor(x/S);
 
@@ -84,6 +85,15 @@ void HexGrid::draw()
 }
 
 
+void HexGrid::hilite_hex_at_coords(std::pair<int, int> pt)
+{
+	auto hex_index = atPoint(pt.first, pt.second);
 
+	hex_index.first = (960 - pt.second) / 80;
+	hex_index.second = (pt.first -200) / 80; 
+
+	m_hilited = hex_index;
+	this->m_pHexGrid->SetHiliteHex(hex_index);
+}
 
 } /*namespace Wand */

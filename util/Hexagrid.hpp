@@ -13,8 +13,7 @@
 #include <boost/geometry/algorithms/make.hpp>
 #include <boost/geometry/strategies/transform/map_transformer.hpp>
 
-
-
+#include "HexCell.hpp"
 
 
 namespace bg=boost::geometry;
@@ -38,6 +37,8 @@ public:
 
 	template<std::size_t dim = 2, bool SameScale = true>
 	using transformer_type = trans::map_transformer<double, dim,dim,true, SameScale>;
+
+	Wand::HexIndex m_hilite;
 
 
 private:
@@ -174,6 +175,8 @@ public:
 		return m_PointToHexCoordinate(p);
 	}
 
+	void SetHiliteHex(Wand::HexIndex hex) { m_hilite = hex; }
+
 	private:
 
 	class mapHexToPixel
@@ -208,11 +211,14 @@ void Hexagrid<T>::mapHexToPixel::operator()( std::function< void(const bgm::ring
 {
 	for(std::size_t i = 0; i < p_grid->n_rows;++i)
 	{
-		for(std::size_t j = 0;j < p_grid->n_cols;++j)
+		for (std::size_t j = 0; j < p_grid->n_cols; ++j)
 		{
-			pixel_ring_type dest_hexcell_ring;
-			assert(boost::geometry::transform( (*p_grid)(i,j).getRing() ,dest_hexcell_ring, transformer));
-			do_func(dest_hexcell_ring);
+			if (i != p_grid->m_hilite.first || j != p_grid->m_hilite.second)
+			{
+				pixel_ring_type dest_hexcell_ring;
+				assert(boost::geometry::transform((*p_grid)(i, j).getRing(), dest_hexcell_ring, transformer));
+				do_func(dest_hexcell_ring);
+			}
 		}
 	}
 }
